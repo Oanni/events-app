@@ -1,0 +1,383 @@
+/* Глобальные стили для мобильной платформы */
+
+/* Основной фон приложения */
+body {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+#root {
+  background-color: #000000 !important;
+}
+
+/* Стили для всех панелей */
+.vkuiPanel {
+  background-color: #000000 !important;
+}
+
+.vkuiPanel__in {
+  background-color: #000000 !important;
+}
+
+/* Стили для заголовков панелей */
+.vkuiPanelHeader {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+.vkuiPanelHeader__content {
+  color: #FFFFFF !important;
+}
+
+/* Стили для групп */
+.vkuiGroup {
+  background-color: #000000 !important;
+}
+
+.vkuiGroup__content {
+  background-color: #000000 !important;
+}
+
+/* Стили для полей ввода */
+.vkuiInput {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+}
+
+.vkuiInput__el {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+.vkuiInput__el::placeholder {
+  color: #AAAAAA !important;
+  -webkit-text-fill-color: #AAAAAA !important;
+}
+
+/* Стили для текстовых областей */
+.vkuiTextarea {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+}
+
+.vkuiTextarea__el {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Стили для селектов */
+.vkuiSelect {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+}
+
+.vkuiSelect__el {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+/* Стили для нативных HTML элементов */
+input[type="date"],
+input[type="time"],
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+select,
+textarea {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+  padding: 12px !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  outline: none !important;
+  font-family: inherit !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Стили для плейсхолдеров */
+input::placeholder,
+textarea::placeholder {
+  color: #AAAAAA !important;
+  -webkit-text-fill-color: #AAAAAA !important;
+  opacity: 1 !important;
+}
+
+/* Специальные стили для полей даты и времени */
+input[type="date"],
+input[type="time"] {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  min-height: 44px !important; /* Минимальная высота для мобильных */
+  cursor: pointer !important;
+  position: relative !important;
+  display: block !important;
+}
+
+/* Стили для Android */
+input[type="date"]::-webkit-datetime-edit,
+input[type="time"]::-webkit-datetime-edit {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
+input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="time"]::-webkit-datetime-edit-text {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field,
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) !important;
+}
+
+/* Стили для опций в селектах */
+option {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+/* Стили для кнопок */
+.vkuiButton {
+  color: #FFFFFF !important;
+}
+
+.vkuiButton--mode-secondary {
+  background-color: transparent !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+}
+
+.vkuiButton--mode-primary {
+  background-color: #0077FF !important;
+  border: none !important;
+  color: #FFFFFF !important;
+}
+
+/* Стили для текста */
+.vkuiText {
+  color: #FFFFFF !important;
+}
+
+/* Стили для заголовков */
+.vkuiHeader {
+  color: #FFFFFF !important;
+}
+
+/* Стили для разделителей */
+.vkuiDiv {
+  color: #FFFFFF !important;
+}
+
+/* Стили для карточек */
+.vkuiCard {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+}
+
+/* Стили для списков */
+.vkuiList {
+  background-color: #000000 !important;
+}
+
+.vkuiCell {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+/* Стили для модальных окон */
+.vkuiModalCard {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+/* Стили для уведомлений */
+.vkuiSnackbar {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+/* Стили для навигации */
+.vkuiTabbar {
+  background-color: #1A1A1A !important;
+  border-top: 1px solid #333 !important;
+}
+
+.vkuiTabbarItem {
+  color: #AAAAAA !important;
+}
+
+.vkuiTabbarItem--selected {
+  color: #0077FF !important;
+}
+
+/* Стили для спиннеров */
+.vkuiScreenSpinner {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Стили для ошибок */
+.vkuiFormItem--error .vkuiInput {
+  border-color: #FF3B30 !important;
+}
+
+.vkuiFormItem--error .vkuiTextarea {
+  border-color: #FF3B30 !important;
+}
+
+/* Стили для фокуса */
+.vkuiInput:focus,
+.vkuiTextarea:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #0077FF !important;
+  box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.2) !important;
+}
+
+/* Специальные стили для фокуса полей даты и времени */
+input[type="date"]:focus,
+input[type="time"]:focus {
+  border-color: #0077FF !important;
+  box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.2) !important;
+  outline: none !important;
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+}
+
+/* Дополнительные стили для мобильной оптимизации */
+@media (max-width: 768px) {
+  .vkuiPanel {
+    padding-bottom: 80px !important; /* Место для таббара */
+  }
+  
+  input, select, textarea {
+    font-size: 16px !important; /* Предотвращает зум на iOS */
+  }
+  
+  /* Улучшенные стили для мобильных устройств */
+  .vkuiInput,
+  .vkuiTextarea,
+  input, select, textarea {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    border-radius: 8px !important;
+  }
+  
+  /* Стили для iOS Safari */
+  input[type="date"],
+  input[type="time"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: #1A1A1A !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    min-height: 44px !important;
+    cursor: pointer !important;
+    position: relative !important;
+  }
+  
+  /* Специальные стили для мобильных полей даты/времени */
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) !important;
+    opacity: 0.8 !important;
+    cursor: pointer !important;
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+  
+  input[type="date"]::-webkit-calendar-picker-indicator:hover,
+  input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1 !important;
+  }
+  
+  /* Улучшенные стили для фокуса на мобильных */
+  .vkuiInput:focus,
+  .vkuiTextarea:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none !important;
+    border-color: #0077FF !important;
+    box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.2) !important;
+  }
+  
+  /* Специальные стили для полей даты и времени на мобильных */
+  input[type="date"],
+  input[type="time"] {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: rgba(0, 119, 255, 0.2) !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+  }
+  
+  /* Улучшенные стили для индикаторов календаря на мобильных */
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) !important;
+    opacity: 0.8 !important;
+    cursor: pointer !important;
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+/* Стили для темной темы VK */
+[data-vkui-theme="dark"] {
+  --vkui--color_background: #000000 !important;
+  --vkui--color_background_secondary: #1A1A1A !important;
+  --vkui--color_background_tertiary: #333333 !important;
+  --vkui--color_text_primary: #FFFFFF !important;
+  --vkui--color_text_secondary: #CCCCCC !important;
+  --vkui--color_text_tertiary: #AAAAAA !important;
+  --vkui--color_accent_themed: #0077FF !important;
+  --vkui--color_stroke_primary: #333333 !important;
+  --vkui--color_stroke_secondary: #444444 !important;
+}
