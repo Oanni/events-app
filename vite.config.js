@@ -36,7 +36,7 @@ function threatJsFilesAsJsx() {
  * The details are here: https://dev.vk.com/mini-apps/development/on-demand-resources.
  */
 export default defineConfig({
-  base: './',
+  base: '/',
 
   plugins: [
     react(),
@@ -58,6 +58,15 @@ export default defineConfig({
 
   build: {
     outDir: 'build',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          vkui: ['@vkontakte/vkui'],
+          icons: ['@vkontakte/icons'],
+        },
+      },
+    },
   },
 
   // Настройка сервера для совместимости с VK Tunnel
