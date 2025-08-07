@@ -2,7 +2,7 @@
 const getApiBaseUrl = () => {
   // Check if we're in production (Vercel)
   if (window.location.hostname.includes('vercel.app')) {
-    return import.meta.env.VITE_API_URL || 'https://qsrzonpgitnwgajdyppw.supabase.co/rest/v1';
+    return 'https://qsrzonpgitnwgajdyppw.supabase.co/rest/v1';
   }
   
   // Check if we're in VK tunnel
@@ -25,8 +25,8 @@ const apiRequest = async (endpoint, options = {}) => {
       'Content-Type': 'application/json',
       // Add Supabase headers for production
       ...(window.location.hostname.includes('vercel.app') && {
-        'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzcnpvbnBnaXRud2dhamR5cHB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI2MzAsImV4cCI6MjA3MDE0ODYzMH0.htLrEKIdeWSYcbhNXcH7OnRHzeiOrG38EUYUMzGI15k',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzcnpvbnBnaXRud2dhamR5cHB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI2MzAsImV4cCI6MjA3MDE0ODYzMH0.htLrEKIdeWSYcbhNXcH7OnRHzeiOrG38EUYUMzGI15k'}`
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzcnpvbnBnaXRud2dhamR5cHB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI2MzAsImV4cCI6MjA3MDE0ODYzMH0.htLrEKIdeWSYcbhNXcH7OnRHzeiOrG38EUYUMzGI15k',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzcnpvbnBnaXRud2dhamR5cHB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI2MzAsImV4cCI6MjA3MDE0ODYzMH0.htLrEKIdeWSYcbhNXcH7OnRHzeiOrG38EUYUMzGI15k'
       })
     },
     ...options
