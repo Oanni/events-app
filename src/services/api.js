@@ -2,7 +2,8 @@
 const getApiBaseUrl = () => {
   // Check if we're in production (Vercel)
   if (window.location.hostname.includes('vercel.app')) {
-    return process.env.VITE_API_URL || 'https://your-supabase-project.supabase.co/rest/v1';
+    // For now, use a placeholder - will be updated with Supabase URL
+    return 'https://your-supabase-project.supabase.co/rest/v1';
   }
   
   // Check if we're in VK tunnel
@@ -23,8 +24,11 @@ const apiRequest = async (endpoint, options = {}) => {
   const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
-      'apikey': process.env.VITE_SUPABASE_ANON_KEY || '',
-      'Authorization': `Bearer ${process.env.VITE_SUPABASE_ANON_KEY || ''}`
+      // Only add Supabase headers if we're using Supabase
+      ...(window.location.hostname.includes('vercel.app') && {
+        'apikey': process.env.VITE_SUPABASE_ANON_KEY || '',
+        'Authorization': `Bearer ${process.env.VITE_SUPABASE_ANON_KEY || ''}`
+      })
     },
     ...options
   };
@@ -49,37 +53,37 @@ const apiRequest = async (endpoint, options = {}) => {
 // Events API
 export const eventsAPI = {
   getAll: () => apiRequest('/events'),
-  getById: (id) => apiRequest(`/events?id=eq.${id}`),
+  getById: (id) => apiRequest(`/events/${id}`),
   create: (eventData) => apiRequest('/events', {
     method: 'POST',
     body: JSON.stringify(eventData)
   }),
-  update: (id, eventData) => apiRequest(`/events?id=eq.${id}`, {
-    method: 'PATCH',
+  update: (id, eventData) => apiRequest(`/events/${id}`, {
+    method: 'PUT',
     body: JSON.stringify(eventData)
   }),
-  delete: (id) => apiRequest(`/events?id=eq.${id}`, {
+  delete: (id) => apiRequest(`/events/${id}`, {
     method: 'DELETE'
   }),
-  getMyEvents: () => apiRequest('/events?created_by=eq.current_user'),
-  search: (query) => apiRequest(`/events?title=ilike.*${query}*`)
+  getMyEvents: () => apiRequest('/events/my'),
+  search: (query) => apiRequest(`/events/search?q=${encodeURIComponent(query)}`)
 };
 
 // Registrations API
 export const registrationsAPI = {
   getAll: () => apiRequest('/registrations'),
-  getById: (id) => apiRequest(`/registrations?id=eq.${id}`),
+  getById: (id) => apiRequest(`/registrations/${id}`),
   create: (registrationData) => apiRequest('/registrations', {
     method: 'POST',
     body: JSON.stringify(registrationData)
   }),
-  delete: (id) => apiRequest(`/registrations?id=eq.${id}`, {
+  delete: (id) => apiRequest(`/registrations/${id}`, {
     method: 'DELETE'
   }),
-  getMyRegistrations: () => apiRequest('/registrations?user_id=eq.current_user'),
-  getByEvent: (eventId) => apiRequest(`/registrations?event_id=eq.${eventId}`),
-  checkRegistration: (eventId) => apiRequest(`/registrations?event_id=eq.${eventId}&user_id=eq.current_user`),
-  cancelRegistration: (eventId) => apiRequest(`/registrations?event_id=eq.${eventId}&user_id=eq.current_user`, {
+  getMyRegistrations: () => apiRequest('/registrations/my'),
+  getByEvent: (eventId) => apiRequest(`/registrations/event/${eventId}`),
+  checkRegistration: (eventId) => apiRequest(`/registrations/check/${eventId}`),
+  cancelRegistration: (eventId) => apiRequest(`/registrations/cancel/${eventId}`, {
     method: 'DELETE'
   })
 };
