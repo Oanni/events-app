@@ -29,7 +29,7 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
     
     try {
       console.log('🔄 Загружаем регистрации пользователя...');
-      const response = await registrationsAPI.getMyRegistrations();
+      const response = await registrationsAPI.getMyRegistrations(fetchedUser.id);
       console.log('📋 Получен ответ:', response);
       console.log('📊 Данные регистраций:', response);
       

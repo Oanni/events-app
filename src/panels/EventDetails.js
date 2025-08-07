@@ -60,7 +60,7 @@ export const EventDetails = ({ id, fetchedUser }) => {
       
       // Проверяем регистрацию пользователя
       if (fetchedUser) {
-        const checkResponse = await registrationsAPI.checkRegistration(eventId);
+        const checkResponse = await registrationsAPI.checkRegistration(eventId, fetchedUser.id);
         // Supabase возвращает массив, проверяем есть ли записи
         setIsUserRegisteredForEvent(checkResponse && checkResponse.length > 0);
       }
@@ -88,7 +88,7 @@ export const EventDetails = ({ id, fetchedUser }) => {
     if (!fetchedUser) return;
 
     try {
-      await registrationsAPI.cancelRegistration(eventId);
+      await registrationsAPI.cancelRegistration(eventId, fetchedUser.id);
       setIsUserRegisteredForEvent(false);
       await loadEventDetails(); // Обновляем список регистраций
       

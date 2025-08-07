@@ -82,8 +82,9 @@ export const Events = ({ id, fetchedUser }) => {
   const handleRegisterPress = async (event) => {
     if (fetchedUser) {
       try {
-        const response = await registrationsAPI.checkRegistration(event.id);
-        const isRegistered = response.data.is_registered;
+        const response = await registrationsAPI.checkRegistration(event.id, fetchedUser.id);
+        // Supabase возвращает массив, проверяем есть ли записи
+        const isRegistered = response && response.length > 0;
         
         if (isRegistered) {
           // Отменить регистрацию

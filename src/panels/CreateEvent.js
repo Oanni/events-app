@@ -95,6 +95,7 @@ export const CreateEvent = ({ id, fetchedUser }) => {
         location: formData.location.trim(),
         date: combinedDateTime,
         description: formData.description.trim(),
+        created_by: fetchedUser.id, // Добавляем ID создателя
         vk_link: formData.vkLink.trim() || null,
       };
 

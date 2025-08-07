@@ -64,7 +64,7 @@ export const eventsAPI = {
   delete: (id) => apiRequest(`/events?id=eq.${id}`, {
     method: 'DELETE'
   }),
-  getMyEvents: () => apiRequest('/events?created_by=eq.current_user'),
+  getMyEvents: (userId) => apiRequest(`/events?created_by=eq.${userId}`),
   search: (query) => apiRequest(`/events?title=ilike.*${query}*`)
 };
 
@@ -79,10 +79,10 @@ export const registrationsAPI = {
   delete: (id) => apiRequest(`/registrations?id=eq.${id}`, {
     method: 'DELETE'
   }),
-  getMyRegistrations: () => apiRequest('/registrations?user_id=eq.current_user'),
+  getMyRegistrations: (userId) => apiRequest(`/registrations?user_id=eq.${userId}`),
   getByEvent: (eventId) => apiRequest(`/registrations?event_id=eq.${eventId}`),
-  checkRegistration: (eventId) => apiRequest(`/registrations?event_id=eq.${eventId}&user_id=eq.current_user`),
-  cancelRegistration: (eventId) => apiRequest(`/registrations?event_id=eq.${eventId}&user_id=eq.current_user`, {
+  checkRegistration: (eventId, userId) => apiRequest(`/registrations?event_id=eq.${eventId}&user_id=eq.${userId}`),
+  cancelRegistration: (eventId, userId) => apiRequest(`/registrations?event_id=eq.${eventId}&user_id=eq.${userId}`, {
     method: 'DELETE'
   })
 };

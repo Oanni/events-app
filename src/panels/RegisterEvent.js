@@ -161,6 +161,7 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
     try {
       const registrationData = {
         event_id: parseInt(eventId),
+        user_id: fetchedUser.id, // Добавляем ID пользователя
         full_name: formData.fullName.trim(),
         birth_date: formData.birthDate,
         institute: formData.institute,
@@ -194,7 +195,7 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
     if (!fetchedUser) return;
 
     try {
-      await registrationsAPI.cancelRegistration(eventId);
+      await registrationsAPI.cancelRegistration(eventId, fetchedUser.id);
       
       setSnackbar({
         text: 'Регистрация отменена',
@@ -205,9 +206,13 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
       setTimeout(() => {
         routeNavigator.push(`/event/${eventId}`);
       }, 2000);
+
     } catch (error) {
       const errorMessage = handleAPIError(error);
-      setSnackbar({ text: errorMessage, mode: 'error' });
+      setSnackbar({
+        text: errorMessage,
+        mode: 'error'
+      });
     }
   };
 

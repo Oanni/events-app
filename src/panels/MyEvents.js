@@ -31,7 +31,7 @@ export const MyEvents = ({ id, fetchedUser }) => {
     if (!fetchedUser) return;
     
     try {
-      const response = await eventsAPI.getMyEvents();
+      const response = await eventsAPI.getMyEvents(fetchedUser.id);
       // Supabase возвращает массив напрямую, а не в response.data
       setMyEvents(response || []);
     } catch (error) {
