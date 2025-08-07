@@ -41,10 +41,11 @@ export const Events = ({ id, fetchedUser }) => {
       console.log('🔄 Загружаем мероприятия...');
       const response = await eventsAPI.getAll();
       console.log('📋 Получен ответ:', response);
-      console.log('📊 Данные мероприятий:', response.data);
+      console.log('📊 Данные мероприятий:', response);
       
+      // Supabase возвращает массив напрямую, а не в response.data
       // Сортируем по дате (ближайшие сначала)
-      const sortedEvents = response.data.sort((a, b) => new Date(a.date) - new Date(b.date));
+      const sortedEvents = response.sort((a, b) => new Date(a.date) - new Date(b.date));
       setEvents(sortedEvents);
       setFilteredEvents(sortedEvents);
       console.log('✅ Мероприятия установлены в состояние:', sortedEvents);

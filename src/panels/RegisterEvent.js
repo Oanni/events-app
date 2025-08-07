@@ -99,11 +99,12 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
   const loadEvent = async () => {
     try {
       const response = await eventsAPI.getById(eventId);
-      if (!response.data) {
+      // Supabase возвращает массив, берем первый элемент
+      if (!response || response.length === 0) {
         routeNavigator.push('/');
         return;
       }
-      setEvent(response.data);
+      setEvent(response[0]);
     } catch (error) {
       const errorMessage = handleAPIError(error);
       setSnackbar({ text: errorMessage, mode: 'error' });

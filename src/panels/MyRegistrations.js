@@ -31,10 +31,11 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
       console.log('🔄 Загружаем регистрации пользователя...');
       const response = await registrationsAPI.getMyRegistrations();
       console.log('📋 Получен ответ:', response);
-      console.log('📊 Данные регистраций:', response.data);
+      console.log('📊 Данные регистраций:', response);
       
+      // Supabase возвращает массив напрямую, а не в response.data
       // Получаем ID мероприятий из регистраций
-      const eventIds = response.data.map(registration => registration.event_id);
+      const eventIds = response.map(registration => registration.event_id);
       console.log('🎯 ID мероприятий:', eventIds);
       
       // Получаем полную информацию о мероприятиях
@@ -42,8 +43,9 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
       for (const eventId of eventIds) {
         try {
           const eventResponse = await eventsAPI.getById(eventId);
-          if (eventResponse.data) {
-            events.push(eventResponse.data);
+          // Supabase возвращает массив, берем первый элемент
+          if (eventResponse && eventResponse.length > 0) {
+            events.push(eventResponse[0]);
           }
         } catch (error) {
           console.error(`Ошибка при получении мероприятия ${eventId}:`, error);

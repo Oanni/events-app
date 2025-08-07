@@ -22,7 +22,8 @@ export const Home = ({ id, fetchedUser }) => {
     try {
       setLoading(true);
       const response = await eventsAPI.getAll();
-      setEvents(response.data || []);
+      // Supabase возвращает массив напрямую, а не в response.data
+      setEvents(response || []);
     } catch (error) {
       const errorMessage = handleAPIError(error);
       setSnackbar({ text: errorMessage, mode: 'error' });

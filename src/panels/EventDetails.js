@@ -46,20 +46,23 @@ export const EventDetails = ({ id, fetchedUser }) => {
       
       // Загружаем мероприятие
       const eventResponse = await eventsAPI.getById(eventId);
-      if (!eventResponse.data) {
+      // Supabase возвращает массив, берем первый элемент
+      if (!eventResponse || eventResponse.length === 0) {
         setEvent(null);
         return;
       }
-      setEvent(eventResponse.data);
+      setEvent(eventResponse[0]);
       
       // Загружаем регистрации на мероприятие
       const registrationsResponse = await registrationsAPI.getByEvent(eventId);
-      setRegistrations(registrationsResponse.data || []);
+      // Supabase возвращает массив напрямую
+      setRegistrations(registrationsResponse || []);
       
       // Проверяем регистрацию пользователя
       if (fetchedUser) {
         const checkResponse = await registrationsAPI.checkRegistration(eventId);
-        setIsUserRegisteredForEvent(checkResponse.data.is_registered);
+        // Supabase возвращает массив, проверяем есть ли записи
+        setIsUserRegisteredForEvent(checkResponse && checkResponse.length > 0);
       }
     } catch (error) {
       const errorMessage = handleAPIError(error);
