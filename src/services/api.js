@@ -1,122 +1,91 @@
-// Определяем базовый URL API в зависимости от окружения
+// API Configuration
 const getApiBaseUrl = () => {
-  // Если мы в VK туннеле, используем HTTPS сервер
+  // Check if we're in production (Vercel)
+  if (window.location.hostname.includes('vercel.app')) {
+    return process.env.VITE_API_URL || 'https://your-supabase-project.supabase.co/rest/v1';
+  }
+  
+  // Check if we're in VK tunnel
   if (window.location.hostname.includes('tunnel.vk-apps.com')) {
     return 'https://localhost:3443/api';
   }
-  // Для локальной разработки
-  return 'http://localhost:3001/api';
+  
+  // Local development
+  return 'http://192.168.1.253:3001/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();
 
-// Общая функция для HTTP запросов
+// Helper function for API requests
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-  const config = {
+  
+  const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+      'apikey': process.env.VITE_SUPABASE_ANON_KEY || '',
+      'Authorization': `Bearer ${process.env.VITE_SUPABASE_ANON_KEY || ''}`
     },
-    ...options,
+    ...options
   };
 
   try {
-    console.log('Making API request to:', url);
-    const response = await fetch(url, config);
+    console.log(`Making API request to: ${url}`);
+    const response = await fetch(url, defaultOptions);
     
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const data = await response.json();
-    console.log('API response:', data);
+    console.log(`API response:`, data);
     return data;
   } catch (error) {
-    console.error('API Error for', url, ':', error);
-    
-    // Проверяем тип ошибки
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      throw new Error('Не удается подключиться к серверу. Проверьте, что сервер запущен на http://localhost:3001');
-    }
-    
+    console.error(`API Error for ${url}:`, error);
     throw error;
   }
 };
 
-// API для мероприятий
+// Events API
 export const eventsAPI = {
-  // Получить все мероприятия
   getAll: () => apiRequest('/events'),
-
-  // Получить мероприятие по ID
-  getById: (id) => apiRequest(`/events/${id}`),
-
-  // Создать новое мероприятие
+  getById: (id) => apiRequest(`/events?id=eq.${id}`),
   create: (eventData) => apiRequest('/events', {
     method: 'POST',
-    body: JSON.stringify(eventData),
+    body: JSON.stringify(eventData)
   }),
-
-  // Обновить мероприятие
-  update: (id, eventData) => apiRequest(`/events/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(eventData),
+  update: (id, eventData) => apiRequest(`/events?id=eq.${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(eventData)
   }),
-
-  // Удалить мероприятие
-  delete: (id) => apiRequest(`/events/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest(`/events?id=eq.${id}`, {
+    method: 'DELETE'
   }),
-
-  // Поиск мероприятий
-  search: (query) => apiRequest(`/events/search?q=${encodeURIComponent(query)}`),
-
-  // Получить мероприятия пользователя
-  getMyEvents: () => apiRequest('/events/my'),
+  getMyEvents: () => apiRequest('/events?created_by=eq.current_user'),
+  search: (query) => apiRequest(`/events?title=ilike.*${query}*`)
 };
 
-// API для регистраций
+// Registrations API
 export const registrationsAPI = {
-  // Получить все регистрации
   getAll: () => apiRequest('/registrations'),
-
-  // Получить регистрацию по ID
-  getById: (id) => apiRequest(`/registrations/${id}`),
-
-  // Создать новую регистрацию
+  getById: (id) => apiRequest(`/registrations?id=eq.${id}`),
   create: (registrationData) => apiRequest('/registrations', {
     method: 'POST',
-    body: JSON.stringify(registrationData),
+    body: JSON.stringify(registrationData)
   }),
-
-  // Удалить регистрацию
-  delete: (id) => apiRequest(`/registrations/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest(`/registrations?id=eq.${id}`, {
+    method: 'DELETE'
   }),
-
-  // Получить регистрации пользователя
-  getMyRegistrations: () => apiRequest('/registrations/my'),
-
-  // Получить регистрации на мероприятие
-  getByEvent: (eventId) => apiRequest(`/registrations/event/${eventId}`),
-
-  // Проверить регистрацию пользователя на мероприятие
-  checkRegistration: (eventId) => apiRequest(`/registrations/check/${eventId}`),
-
-  // Отменить регистрацию на мероприятие
-  cancelRegistration: (eventId) => apiRequest(`/registrations/cancel/${eventId}`, {
-    method: 'DELETE',
-  }),
-
-  // Получить статистику регистраций
-  getStats: () => apiRequest('/registrations/stats'),
+  getMyRegistrations: () => apiRequest('/registrations?user_id=eq.current_user'),
+  getByEvent: (eventId) => apiRequest(`/registrations?event_id=eq.${eventId}`),
+  checkRegistration: (eventId) => apiRequest(`/registrations?event_id=eq.${eventId}&user_id=eq.current_user`),
+  cancelRegistration: (eventId) => apiRequest(`/registrations?event_id=eq.${eventId}&user_id=eq.current_user`, {
+    method: 'DELETE'
+  })
 };
 
-// Утилиты для работы с датами
+// Date utilities
 export const dateUtils = {
-  // Форматировать дату для отображения
   formatDate: (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('ru-RU', {
@@ -124,41 +93,47 @@ export const dateUtils = {
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit',
+      minute: '2-digit'
     });
   },
-
-  // Проверить, прошло ли мероприятие
-  isEventPassed: (dateString) => {
-    const eventDate = new Date(dateString);
-    const now = new Date();
-    return eventDate <= now;
+  
+  formatDateOnly: (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   },
-
-  // Получить относительное время (через 2 дня, через неделю и т.д.)
-  getRelativeTime: (dateString) => {
-    const eventDate = new Date(dateString);
-    const now = new Date();
-    const diffTime = eventDate - now;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) return 'Прошло';
-    if (diffDays === 0) return 'Сегодня';
-    if (diffDays === 1) return 'Завтра';
-    if (diffDays < 7) return `Через ${diffDays} дня`;
-    if (diffDays < 30) return `Через ${Math.ceil(diffDays / 7)} недель`;
-    return `Через ${Math.ceil(diffDays / 30)} месяцев`;
-  },
+  
+  formatTimeOnly: (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('ru-RU', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
 };
 
-// Обработка ошибок
+// Error handling
 export const handleAPIError = (error) => {
   console.error('API Error:', error);
   
-  // Показываем пользователю понятное сообщение об ошибке
-  const errorMessage = error.message || 'Произошла ошибка при загрузке данных';
+  if (error.message.includes('Failed to fetch')) {
+    return 'Ошибка подключения к серверу. Проверьте интернет-соединение.';
+  }
   
-  // Здесь можно добавить показ уведомления пользователю
-  // Например, через snackbar или toast
-  return errorMessage;
+  if (error.message.includes('HTTP error! status: 401')) {
+    return 'Ошибка авторизации. Войдите в приложение заново.';
+  }
+  
+  if (error.message.includes('HTTP error! status: 404')) {
+    return 'Запрашиваемый ресурс не найден.';
+  }
+  
+  if (error.message.includes('HTTP error! status: 500')) {
+    return 'Ошибка сервера. Попробуйте позже.';
+  }
+  
+  return 'Произошла ошибка. Попробуйте еще раз.';
 };
