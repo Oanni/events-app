@@ -14,7 +14,6 @@ import {
   Icon28HeartCircleOutline
 } from '@vkontakte/icons';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
-import { DEFAULT_VIEW_PANELS } from '../routes';
 import PropTypes from 'prop-types';
 
 export const Navigation = ({ activeTab, onTabChange }) => {
@@ -35,13 +34,13 @@ export const Navigation = ({ activeTab, onTabChange }) => {
       icon: <Icon28UserOutline />,
       route: '/my-events',
     },
-      {
-    id: 'my_registrations',
-    text: 'Туда я пойду!',
-    ariaLabel: 'Мероприятия, на которые я записался',
-    icon: <Icon28HeartCircleOutline />,
-    route: '/my-registrations',
-  },
+    {
+      id: 'my_registrations',
+      text: 'Туда я пойду!',
+      ariaLabel: 'Мероприятия, на которые я записался',
+      icon: <Icon28HeartCircleOutline />,
+      route: '/my-registrations',
+    },
   ];
 
   const handleTabClick = (tabId) => {
@@ -53,7 +52,7 @@ export const Navigation = ({ activeTab, onTabChange }) => {
   };
 
   const handleCreateEvent = () => {
-    routeNavigator.push('/create-event');
+    routeNavigator.push('/create');
   };
 
   const handleHelp = () => {
