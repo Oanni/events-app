@@ -4,6 +4,9 @@
 body {
   background-color: #000000 !important;
   color: #FFFFFF !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
 #root {
@@ -43,6 +46,9 @@ body {
   background-color: #1A1A1A !important;
   border: 1px solid #333 !important;
   color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
 .vkuiInput__el {
@@ -63,6 +69,7 @@ body {
   background-color: #1A1A1A !important;
   border: 1px solid #333 !important;
   color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
 }
 
 .vkuiTextarea__el {
@@ -174,6 +181,12 @@ option {
 /* Стили для кнопок */
 .vkuiButton {
   color: #FFFFFF !important;
+  transition: all 0.3s ease !important;
+}
+
+.vkuiButton:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 119, 255, 0.3) !important;
 }
 
 .vkuiButton--mode-secondary {
@@ -201,12 +214,19 @@ option {
 /* Стили для разделителей */
 .vkuiDiv {
   color: #FFFFFF !important;
+  background-color: transparent !important;
 }
 
 /* Стили для карточек */
 .vkuiCard {
   background-color: #1A1A1A !important;
   border: 1px solid #333 !important;
+  transition: all 0.3s ease !important;
+}
+
+.vkuiCard:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Стили для списков */
@@ -278,6 +298,92 @@ input[type="time"]:focus {
   background-color: #1A1A1A !important;
   color: #FFFFFF !important;
   -webkit-text-fill-color: #FFFFFF !important;
+}
+
+/* CSS анимации */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Классы для анимаций */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.button-hover {
+  transition: all 0.3s ease;
+}
+
+.button-hover:hover {
+  transform: scale(1.05);
+}
+
+.tab-transition {
+  transition: all 0.3s ease;
+}
+
+.tab-transition:hover {
+  transform: translateY(-1px);
+}
+
+/* Анимация для спиннера */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Дополнительные стили для мобильной оптимизации */
@@ -380,4 +486,121 @@ input[type="time"]:focus {
   --vkui--color_accent_themed: #0077FF !important;
   --vkui--color_stroke_primary: #333333 !important;
   --vkui--color_stroke_secondary: #444444 !important;
+}
+
+/* Дополнительные стили для мобильной оптимизации */
+.vkuiSearch {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+}
+
+.vkuiPlaceholder {
+  background-color: transparent !important;
+}
+
+/* Стили для Syncfusion DatePicker */
+.custom-datepicker {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+}
+
+.custom-datepicker .e-input-group {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+}
+
+.custom-datepicker .e-input-group input {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+}
+
+.custom-datepicker .e-calendar {
+  background-color: #1A1A1A !important;
+  border: 1px solid #333 !important;
+  color: #FFFFFF !important;
+}
+
+.custom-datepicker .e-calendar .e-header {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+.custom-datepicker .e-calendar .e-content {
+  background-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+}
+
+.custom-datepicker .e-calendar .e-day {
+  color: #FFFFFF !important;
+}
+
+.custom-datepicker .e-calendar .e-day:hover {
+  background-color: #0077FF !important;
+  color: #FFFFFF !important;
+}
+
+.custom-datepicker .e-calendar .e-selected {
+  background-color: #0077FF !important;
+  color: #FFFFFF !important;
+}
+
+/* Стили для круглых плавающих кнопок */
+button[aria-label="Создать мероприятие"],
+button[aria-label="Помощь"] {
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+/* Центрирование содержимого кнопок */
+button[aria-label="Создать мероприятие"] *,
+button[aria-label="Помощь"] * {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+button[aria-label="Создать мероприятие"] {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+}
+
+button[aria-label="Помощь"] {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+}
+
+/* Убираем лишние отступы у внутренних элементов VKUI */
+button[aria-label="Создать мероприятие"] .vkuiButton__content,
+button[aria-label="Помощь"] .vkuiButton__content {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Дополнительные стили для полей даты и времени */
+input[type="date"],
+input[type="time"] {
+  color-scheme: dark;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
