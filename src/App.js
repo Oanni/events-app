@@ -10,7 +10,6 @@ import { MyRegistrations } from './panels/MyRegistrations';
 import { UserProfile } from './panels/UserProfile';
 import { useState, useEffect } from 'react';
 import bridge from '@vkontakte/vk-bridge';
-import { initializeTestData } from './services/initData';
 
 const router = createHashRouter([
   {
@@ -64,7 +63,6 @@ function App() {
       const user = await bridge.send('VKWebAppGetUserInfo');
       setFetchedUser(user);
       setPopout(null);
-      initializeTestData();
     }
     fetchData();
   }, []);
