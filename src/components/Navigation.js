@@ -77,11 +77,12 @@ export const Navigation = ({ activeTab, onTabChange }) => {
         </Tabbar>
       </Div>
       
-      {/* Кнопка создания мероприятия */}
+      {/* Кнопка создания мероприятия - центрированная */}
       <div style={{ 
         position: 'fixed', 
         bottom: '80px', 
-        right: '16px', 
+        left: '50%',
+        transform: 'translateX(-50%)',
         zIndex: 1000 
       }}>
         <Button
@@ -102,6 +103,7 @@ export const Navigation = ({ activeTab, onTabChange }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            transition: 'all 0.3s ease',
           }}
         >
           <Icon28AddOutline />
@@ -132,6 +134,7 @@ export const Navigation = ({ activeTab, onTabChange }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            transition: 'all 0.3s ease',
           }}
         >
           <Icon28HelpOutline />

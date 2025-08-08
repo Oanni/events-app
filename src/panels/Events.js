@@ -15,6 +15,7 @@ import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { eventsAPI, registrationsAPI, handleAPIError } from '../services/api';
 import { EventCard } from '../components/EventCard';
 import { Navigation } from '../components/Navigation';
+import { PageTransition } from '../components/PageTransition';
 import PropTypes from 'prop-types';
 
 export const Events = ({ id, fetchedUser }) => {
@@ -23,10 +24,13 @@ export const Events = ({ id, fetchedUser }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('events');
+  const [isVisible, setIsVisible] = useState(false);
   const routeNavigator = useRouteNavigator();
 
   useEffect(() => {
     loadEvents();
+    // Анимация появления
+    setTimeout(() => setIsVisible(true), 100);
   }, []);
 
   useEffect(() => {
@@ -98,60 +102,66 @@ export const Events = ({ id, fetchedUser }) => {
         // Если не удалось проверить, просто переходим к регистрации
         routeNavigator.push(`/register/${event.id}`);
       }
+    } else {
+      // Если пользователь не авторизован, показываем сообщение
+      console.log('Пользователь не авторизован');
     }
   };
 
   const handleSearchChange = (value) => {
-    // Убеждаемся, что value является строкой
-    const stringValue = typeof value === 'string' ? value : (value?.target?.value || '');
-    setSearchQuery(stringValue);
+    setSearchQuery(value);
   };
 
   const renderEvents = () => {
-    // Показываем спиннер только если загрузка И события пустые
-    if (loading && events.length === 0) {
+    if (loading) {
       return (
         <Div style={{ textAlign: 'center', padding: '40px 0' }}>
-          <ScreenSpinner />
+          <ScreenSpinner size="large" />
         </Div>
       );
     }
 
-    // Если загрузка завершена, но filteredEvents еще пустой, показываем события напрямую
-    const eventsToShow = filteredEvents.length > 0 ? filteredEvents : events;
-    
-    if (eventsToShow.length === 0) {
+    if (filteredEvents.length === 0) {
       return (
         <Placeholder
-          icon={<Icon28CalendarOutline style={{ color: '#0077FF' }} />}
-          header="Мероприятий не найдено"
+          icon={<Icon28CalendarOutline width={56} height={56} />}
+          header="Мероприятия не найдены"
         >
-          {searchQuery ? (
-            <Text style={{ color: '#AAAAAA' }}>
-              Попробуйте изменить поисковый запрос
-            </Text>
-          ) : (
-            <Text style={{ color: '#AAAAAA' }}>
-              Пока нет доступных мероприятий
-            </Text>
-          )}
+          {searchQuery ? 
+            'Попробуйте изменить поисковый запрос' : 
+            'Пока нет доступных мероприятий'
+          }
         </Placeholder>
       );
     }
 
-    return eventsToShow.map(event => {
-      console.log('🎯 Рендерим мероприятие:', event);
-      
-      return (
-        <EventCard
-          key={event.id}
-          event={event}
-          onPress={handleEventPress}
-          isRegistered={false} // Пока отключаем проверку регистрации
-          showRegisterButton={true}
-        />
-      );
-    });
+    return (
+      <PageTransition isVisible={isVisible}>
+        <div style={{ 
+          display: 'grid', 
+          gap: '16px',
+          animation: 'fadeIn 0.6s ease-out'
+        }}>
+          {filteredEvents.map((event, index) => (
+            <div
+              key={event.id}
+              style={{
+                animation: `slideIn 0.4s ease-out ${index * 0.1}s both`,
+                opacity: 0,
+                transform: 'translateY(20px)',
+              }}
+            >
+              <EventCard
+                event={event}
+                onPress={handleEventPress}
+                onRegisterPress={handleRegisterPress}
+                fetchedUser={fetchedUser}
+              />
+            </div>
+          ))}
+        </div>
+      </PageTransition>
+    );
   };
 
   return (
@@ -170,12 +180,11 @@ export const Events = ({ id, fetchedUser }) => {
               backgroundColor: '#1A1A1A',
               border: '1px solid #333',
               color: '#FFFFFF',
+              marginBottom: '16px',
             }}
           />
         </Div>
-      </Group>
-
-      <Group style={{ backgroundColor: '#000000' }}>
+        
         <Div style={{ padding: '0 16px 16px' }}>
           {renderEvents()}
         </Div>

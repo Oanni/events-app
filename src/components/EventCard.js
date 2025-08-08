@@ -27,12 +27,23 @@ export const EventCard = ({ event, onPress, isRegistered, showRegisterButton = t
       <Card 
         mode="shadow" 
         onClick={handlePress}
+        className="card-hover"
         style={{
           backgroundColor: '#1A1A1A',
           border: '1px solid #333',
           borderRadius: '12px',
           cursor: 'pointer',
-          transition: 'all 0.2s ease',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: 'translateY(0)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 119, 255, 0.15)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
         }}
       >
         <Div style={{ padding: '16px' }}>
@@ -42,7 +53,13 @@ export const EventCard = ({ event, onPress, isRegistered, showRegisterButton = t
             </Title>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {isRegistered && (
-                <Badge mode="prominent" style={{ backgroundColor: '#0077FF' }}>
+                <Badge 
+                  mode="prominent" 
+                  style={{ 
+                    backgroundColor: '#0077FF',
+                    animation: 'fadeIn 0.5s ease-in'
+                  }}
+                >
                   Записан
                 </Badge>
               )}
@@ -50,6 +67,7 @@ export const EventCard = ({ event, onPress, isRegistered, showRegisterButton = t
                 <Button
                   mode="tertiary"
                   size="s"
+                  className="button-hover"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (onDelete) onDelete(event);
@@ -58,6 +76,7 @@ export const EventCard = ({ event, onPress, isRegistered, showRegisterButton = t
                     color: '#FF3B30',
                     padding: '4px',
                     minWidth: 'auto',
+                    transition: 'all 0.3s ease',
                   }}
                 >
                   <Icon28DeleteOutline />
@@ -108,6 +127,7 @@ export const EventCard = ({ event, onPress, isRegistered, showRegisterButton = t
               <Button 
                 mode="primary" 
                 size="s"
+                className="button-hover"
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onPress) onPress(event);
@@ -116,6 +136,7 @@ export const EventCard = ({ event, onPress, isRegistered, showRegisterButton = t
                   backgroundColor: '#0077FF',
                   border: 'none',
                   borderRadius: '8px',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 Записаться
@@ -126,6 +147,7 @@ export const EventCard = ({ event, onPress, isRegistered, showRegisterButton = t
               <Button 
                 mode="secondary" 
                 size="s"
+                className="button-hover"
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onPress) onPress(event);
@@ -135,6 +157,7 @@ export const EventCard = ({ event, onPress, isRegistered, showRegisterButton = t
                   border: '1px solid #0077FF',
                   color: '#0077FF',
                   borderRadius: '8px',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 Отменить

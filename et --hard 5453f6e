@@ -1,0 +1,20 @@
+[33md9b8a3f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix Navigation component: remove routes import and update routes
+[33m8fd3eb2[m Fix React routing errors: remove old router and AppConfig
+[33m2fd11a4[m Fix App export to named export
+[33mc7f98db[m Fix VKUI import error in App.js
+[33mfdd51f7[m Fix build error: remove non-existent initData import
+[33m8f471b0[m Implement user profile system: automatic registration with saved user data
+[33m5453f6e[m Add SQL script for institute field in registrations table
+[33m61d638c[m Add academic_group field to registration form and database
+[33m02fc45e[m Fix registration issues: add eventId validation and improve error handling
+[33m2e24365[m Fix JSON parsing errors and improve error handling for Supabase responses
+[33mbf4ef71[m Fix API calls to use real user IDs instead of current_user
+[33mdc6504d[m Fix Supabase API response handling in all components
+[33mbcba7a3[m Fix Supabase URL configuration
+[33m0b2ad25[m Update API to use environment variables
+[33m14f1c4b[m Configure Supabase integration with real API keys
+[33mc12933a[m Fix Vercel configuration and improve build optimization
+[33me6f9103[m Fix Vercel deployment and module loading issues
+[33m56f8459[m Fix Vercel deployment configuration
+[33mfe99a02[m Add Vercel and Supabase deployment configuration
+[33m7e6d49d[m Initial commit: VK Mini App with Node.js backend
