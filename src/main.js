@@ -1,9 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import bridge from '@vkontakte/vk-bridge';
 import { App } from './App';
-import { AppConfig } from './AppConfig';
-import { RouterProvider } from '@vkontakte/vk-mini-apps-router';
-import { router } from './routes';
 import '@vkontakte/vkui/dist/vkui.css';
 import '@syncfusion/ej2-react-calendars/styles/material.css';
 import './styles/global.css';
@@ -152,13 +149,7 @@ document.head.appendChild(styleElement);
 const container = document.getElementById('root');
 const root = createRoot(container);
 
-root.render(
-  <AppConfig>
-    <RouterProvider router={router}>
-      <App />
-    </RouterProvider>
-  </AppConfig>
-);
+root.render(<App />);
 
 if (import.meta.env.MODE === 'development') {
   import('./eruda.js');
