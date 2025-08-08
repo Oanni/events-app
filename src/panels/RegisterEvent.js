@@ -113,34 +113,54 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    // Очищаем ошибку при изменении поля
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // Очищаем ошибку для этого поля
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors(prev => ({
+        ...prev,
+        [field]: ''
+      }));
     }
   };
 
   const validateForm = () => {
-    const fieldErrors = {};
-    
     if (!formData.fullName.trim()) {
-      fieldErrors.fullName = 'ФИО обязательно для заполнения';
-    }
-    
-    if (!formData.birthDate) {
-      fieldErrors.birthDate = 'Дата рождения обязательна для заполнения';
-    }
-    
-    if (!formData.institute) {
-      fieldErrors.institute = 'Институт обязателен для заполнения';
-    }
-    
-    if (!formData.academicGroup.trim()) {
-      fieldErrors.academicGroup = 'Академическая группа обязательна для заполнения';
+      setSnackbar({
+        text: 'Введите полное имя',
+        mode: 'error'
+      });
+      return false;
     }
 
-    setErrors(fieldErrors);
-    return Object.keys(fieldErrors).length === 0;
+    if (!formData.birthDate) {
+      setSnackbar({
+        text: 'Выберите дату рождения',
+        mode: 'error'
+      });
+      return false;
+    }
+
+    if (!formData.institute) {
+      setSnackbar({
+        text: 'Выберите институт',
+        mode: 'error'
+      });
+      return false;
+    }
+
+    if (!formData.academicGroup.trim()) {
+      setSnackbar({
+        text: 'Введите академическую группу',
+        mode: 'error'
+      });
+      return false;
+    }
+
+    return true;
   };
 
   const handleSubmit = async () => {
@@ -410,7 +430,7 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
               <Input
                 value={formData.academicGroup}
                 onChange={(e) => handleInputChange('academicGroup', e.target.value)}
-                placeholder="Например: БПИ-22-1"
+                placeholder="Введите академическую группу"
               />
             </FormItem>
 
