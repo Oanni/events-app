@@ -1,4 +1,4 @@
-import { App as VKApp, ConfigProvider, AdaptivityProvider, Platform } from '@vkontakte/vkui';
+import { ConfigProvider, AdaptivityProvider, Platform } from '@vkontakte/vkui';
 import { RouterProvider, createHashRouter } from '@vkontakte/vk-mini-apps-router';
 import { Home } from './panels/Home';
 import { Events } from './panels/Events';
@@ -70,18 +70,16 @@ function App() {
   return (
     <ConfigProvider platform={Platform.ANDROID} appearance="dark">
       <AdaptivityProvider>
-        <VKApp>
-          <RouterProvider router={router}>
-            <Home id="home" fetchedUser={fetchedUser} />
-            <Events id="events" fetchedUser={fetchedUser} />
-            <CreateEvent id="create" fetchedUser={fetchedUser} />
-            <EventDetails id="event-details" fetchedUser={fetchedUser} />
-            <RegisterEvent id="register" fetchedUser={fetchedUser} />
-            <MyEvents id="my-events" fetchedUser={fetchedUser} />
-            <MyRegistrations id="my-registrations" fetchedUser={fetchedUser} />
-            <UserProfile id="profile" fetchedUser={fetchedUser} />
-          </RouterProvider>
-        </VKApp>
+        <RouterProvider router={router}>
+          <Home id="home" fetchedUser={fetchedUser} />
+          <Events id="events" fetchedUser={fetchedUser} />
+          <CreateEvent id="create" fetchedUser={fetchedUser} />
+          <EventDetails id="event-details" fetchedUser={fetchedUser} />
+          <RegisterEvent id="register" fetchedUser={fetchedUser} />
+          <MyEvents id="my-events" fetchedUser={fetchedUser} />
+          <MyRegistrations id="my-registrations" fetchedUser={fetchedUser} />
+          <UserProfile id="profile" fetchedUser={fetchedUser} />
+        </RouterProvider>
       </AdaptivityProvider>
     </ConfigProvider>
   );
