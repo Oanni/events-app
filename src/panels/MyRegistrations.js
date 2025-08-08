@@ -6,7 +6,8 @@ import {
   Div,
   Placeholder,
   Title,
-  Text
+  Text,
+  ScreenSpinner
 } from '@vkontakte/vkui';
 import { Icon28HeartCircleOutline } from '@vkontakte/icons';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
@@ -17,6 +18,7 @@ import PropTypes from 'prop-types';
 
 export const MyRegistrations = ({ id, fetchedUser }) => {
   const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('my_registrations');
   const routeNavigator = useRouteNavigator();
 
@@ -25,8 +27,12 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
   }, [fetchedUser]);
 
   const loadRegisteredEvents = async () => {
-    if (!fetchedUser) return;
+    if (!fetchedUser) {
+      setLoading(false);
+      return;
+    }
     
+    setLoading(true);
     try {
       console.log('🔄 Загружаем регистрации пользователя...');
       const response = await registrationsAPI.getMyRegistrations(fetchedUser.id);
@@ -60,6 +66,8 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
       console.error('❌ Ошибка при загрузке регистраций:', error);
       const errorMessage = handleAPIError(error);
       // Можно добавить snackbar для показа ошибки
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,6 +76,14 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
   };
 
   const renderRegisteredEvents = () => {
+    if (loading) {
+      return (
+        <Div style={{ textAlign: 'center', padding: '40px 0' }}>
+          <ScreenSpinner size="large" />
+        </Div>
+      );
+    }
+
     if (!fetchedUser) {
       return (
         <Placeholder
