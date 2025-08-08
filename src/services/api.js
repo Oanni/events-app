@@ -34,10 +34,23 @@ const apiRequest = async (endpoint, options = {}) => {
 
   try {
     console.log(`Making API request to: ${url}`);
+    if (options.body) {
+      console.log('Request body:', options.body);
+    }
+    
     const response = await fetch(url, defaultOptions);
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // Попробуем получить текст ошибки
+      let errorText = '';
+      try {
+        errorText = await response.text();
+      } catch (e) {
+        errorText = 'Не удалось получить текст ошибки';
+      }
+      
+      console.error(`HTTP ${response.status} error:`, errorText);
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
     
     // Проверяем, есть ли контент в ответе

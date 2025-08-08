@@ -41,14 +41,29 @@ export const EventDetails = ({ id, fetchedUser }) => {
   }, [eventId, fetchedUser]);
 
   const loadEventDetails = async () => {
+    if (!eventId) {
+      console.error('eventId не определен');
+      setSnackbar({
+        text: 'Ошибка: ID мероприятия не найден',
+        mode: 'error'
+      });
+      return;
+    }
+
     try {
       setLoading(true);
+      
+      console.log('Загружаем детали мероприятия с ID:', eventId);
       
       // Загружаем мероприятие
       const eventResponse = await eventsAPI.getById(eventId);
       // Supabase возвращает массив, берем первый элемент
       if (!eventResponse || eventResponse.length === 0) {
         setEvent(null);
+        setSnackbar({
+          text: 'Мероприятие не найдено',
+          mode: 'error'
+        });
         return;
       }
       setEvent(eventResponse[0]);
@@ -65,6 +80,7 @@ export const EventDetails = ({ id, fetchedUser }) => {
         setIsUserRegisteredForEvent(checkResponse && checkResponse.length > 0);
       }
     } catch (error) {
+      console.error('Ошибка при загрузке деталей мероприятия:', error);
       const errorMessage = handleAPIError(error);
       setSnackbar({ text: errorMessage, mode: 'error' });
     } finally {

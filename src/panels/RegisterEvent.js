@@ -152,6 +152,14 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
       return;
     }
 
+    if (!eventId) {
+      setSnackbar({
+        text: 'Ошибка: ID мероприятия не найден',
+        mode: 'error'
+      });
+      return;
+    }
+
     if (!validateForm()) {
       return;
     }
@@ -159,16 +167,26 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
     setLoading(true);
 
     try {
+      console.log('Отправляем данные регистрации:', {
+        event_id: eventId,
+        user_id: fetchedUser.id,
+        full_name: formData.fullName.trim(),
+        birth_date: formData.birthDate,
+        institute: formData.institute,
+        academic_group: formData.academicGroup.trim(),
+      });
+
       const registrationData = {
-        event_id: parseInt(eventId),
-        user_id: fetchedUser.id, // Добавляем ID пользователя
+        event_id: eventId,
+        user_id: fetchedUser.id,
         full_name: formData.fullName.trim(),
         birth_date: formData.birthDate,
         institute: formData.institute,
         academic_group: formData.academicGroup.trim(),
       };
 
-      await registrationsAPI.create(registrationData);
+      const response = await registrationsAPI.create(registrationData);
+      console.log('Ответ от API:', response);
 
       setSnackbar({
         text: 'Регистрация успешно завершена!',
@@ -181,6 +199,7 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
       }, 2000);
 
     } catch (error) {
+      console.error('Ошибка при регистрации:', error);
       const errorMessage = handleAPIError(error);
       setSnackbar({
         text: errorMessage,
