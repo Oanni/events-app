@@ -82,6 +82,29 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 };
 
+// Users API (профили пользователей)
+export const usersAPI = {
+  getById: (userId) => apiRequest(`/users?id=eq.${userId}`),
+  create: async (userData) => {
+    try {
+      const response = await apiRequest('/users', {
+        method: 'POST',
+        body: JSON.stringify(userData)
+      });
+      return response || { success: true };
+    } catch (error) {
+      throw error;
+    }
+  },
+  update: (userId, userData) => apiRequest(`/users?id=eq.${userId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(userData)
+  }),
+  delete: (userId) => apiRequest(`/users?id=eq.${userId}`, {
+    method: 'DELETE'
+  })
+};
+
 // Events API
 export const eventsAPI = {
   getAll: () => apiRequest('/events'),
@@ -109,7 +132,7 @@ export const eventsAPI = {
   search: (query) => apiRequest(`/events?title=ilike.*${query}*`)
 };
 
-// Registrations API
+// Registrations API (упрощенная версия)
 export const registrationsAPI = {
   getAll: () => apiRequest('/registrations'),
   getById: (id) => apiRequest(`/registrations?id=eq.${id}`),

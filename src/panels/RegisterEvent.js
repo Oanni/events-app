@@ -1,166 +1,74 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Panel, 
-  PanelHeader, 
-  Group, 
-  FormItem, 
-  Input, 
+import {
+  Panel,
+  PanelHeader,
+  FormItem,
+  Input,
+  Select,
   Button,
-  Div,
   Snackbar,
-  Header,
+  Div,
+  Title,
   Text,
-  Avatar,
-  ScreenSpinner
+  Card
 } from '@vkontakte/vkui';
-// DatePickerComponent заменен на нативное поле
-import { Icon28ArrowLeftOutline } from '@vkontakte/icons';
-import { useRouteNavigator, useParams, useSearchParams } from '@vkontakte/vk-mini-apps-router';
-import { eventsAPI, registrationsAPI, handleAPIError } from '../services/api';
-import { Navigation } from '../components/Navigation';
-import bridge from '@vkontakte/vk-bridge';
-
-// Массив институтов
-const INSTITUTES = [
-  { id: 'IT', name: 'ИТ' },
-  { id: 'INMIN', name: 'ИНМИН' },
-  { id: 'IKN', name: 'ИКН' },
-  { id: 'EUPP', name: 'ЭУПП' },
-  { id: 'GI', name: 'ГИ' },
-  { id: 'IBO', name: 'ИБО' },
-  { id: 'IBI', name: 'ИБИ' },
-  { id: 'IFKI', name: 'ИФКИ' },
-  { id: 'IR', name: 'ИР' },
-];
-import PropTypes from 'prop-types';
+import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import { registrationsAPI, usersAPI, handleAPIError } from '../services/api';
 
 export const RegisterEvent = ({ id, fetchedUser }) => {
-  const institutesArray = INSTITUTES;
-  const [event, setEvent] = useState(null);
-  const [formData, setFormData] = useState({
-    fullName: '',
-    birthDate: '',
-    institute: '',
-    academicGroup: '',
-  });
-  const [errors, setErrors] = useState({});
+  const routeNavigator = useRouteNavigator();
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState(null);
-  const [isCancelMode, setIsCancelMode] = useState(false);
-  const [activeTab, setActiveTab] = useState('events');
-  const [userDataLoading, setUserDataLoading] = useState(false);
-  const [vkUserData, setVkUserData] = useState(null);
-  const routeNavigator = useRouteNavigator();
-  const { id: eventId } = useParams();
-  const [searchParams] = useSearchParams();
+  const [userProfile, setUserProfile] = useState(null);
+  const [event, setEvent] = useState(null);
+  const [eventId, setEventId] = useState(null);
+
+  const institutes = [
+    { value: 'IT', label: 'Институт информационных технологий' },
+    { value: 'IBI', label: 'Институт бизнеса и инноваций' },
+    { value: 'IFKI', label: 'Институт физической культуры и спорта' },
+    { value: 'IGSU', label: 'Институт гуманитарных и социальных наук' },
+    { value: 'IMIT', label: 'Институт математики и информационных технологий' },
+    { value: 'IPHT', label: 'Институт прикладных наук и технологий' },
+  ];
 
   useEffect(() => {
-    loadEvent();
-    const action = searchParams.get('action');
-    setIsCancelMode(action === 'cancel');
-    loadUserData();
-  }, [eventId]);
+    // Получаем ID мероприятия из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    setEventId(id);
 
-  const loadUserData = async () => {
-    if (!fetchedUser) return;
-    
-    setUserDataLoading(true);
-    try {
-      const userData = await bridge.send('VKWebAppGetUserInfo', {});
-      setVkUserData(userData);
-      
-      // Автозаполняем форму полученными данными
-      const fullName = `${userData.first_name} ${userData.last_name}`;
-      let birthDate = '';
-      
-      // Обрабатываем дату рождения если доступна
-      if (userData.bdate && userData.bdate_visibility > 0) {
-        const bdateParts = userData.bdate.split('.');
-        if (bdateParts.length >= 3) {
-          // Формат VK: DD.MM.YYYY, нужно преобразовать в YYYY-MM-DD
-          birthDate = `${bdateParts[2]}-${bdateParts[1].padStart(2, '0')}-${bdateParts[0].padStart(2, '0')}`;
-        }
-      }
-      
-      setFormData(prev => ({
-        ...prev,
-        fullName: fullName,
-        birthDate: birthDate,
-      }));
-      
-    } catch (error) {
-      console.log('Не удалось получить данные пользователя:', error);
-      // Не показываем ошибку пользователю, просто работаем без автозаполнения
-    } finally {
-      setUserDataLoading(false);
+    if (id) {
+      loadEvent();
     }
-  };
+
+    // Проверяем профиль пользователя
+    if (fetchedUser) {
+      loadUserProfile();
+    }
+  }, [fetchedUser]);
 
   const loadEvent = async () => {
     try {
-      const response = await eventsAPI.getById(eventId);
-      // Supabase возвращает массив, берем первый элемент
-      if (!response || response.length === 0) {
-        routeNavigator.push('/');
-        return;
+      const response = await fetch(`/api/events/${eventId}`);
+      if (response.ok) {
+        const eventData = await response.json();
+        setEvent(eventData);
       }
-      setEvent(response[0]);
     } catch (error) {
-      const errorMessage = handleAPIError(error);
-      setSnackbar({ text: errorMessage, mode: 'error' });
-      routeNavigator.push('/');
+      console.error('Ошибка при загрузке мероприятия:', error);
     }
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Очищаем ошибку для этого поля
-    if (errors[field]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: ''
-      }));
+  const loadUserProfile = async () => {
+    try {
+      const response = await usersAPI.getById(fetchedUser.id);
+      if (response && response.length > 0) {
+        setUserProfile(response[0]);
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке профиля:', error);
     }
-  };
-
-  const validateForm = () => {
-    if (!formData.fullName.trim()) {
-      setSnackbar({
-        text: 'Введите полное имя',
-        mode: 'error'
-      });
-      return false;
-    }
-
-    if (!formData.birthDate) {
-      setSnackbar({
-        text: 'Выберите дату рождения',
-        mode: 'error'
-      });
-      return false;
-    }
-
-    if (!formData.institute) {
-      setSnackbar({
-        text: 'Выберите институт',
-        mode: 'error'
-      });
-      return false;
-    }
-
-    if (!formData.academicGroup.trim()) {
-      setSnackbar({
-        text: 'Введите академическую группу',
-        mode: 'error'
-      });
-      return false;
-    }
-
-    return true;
   };
 
   const handleSubmit = async () => {
@@ -180,29 +88,19 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
       return;
     }
 
-    if (!validateForm()) {
-      return;
-    }
-
     setLoading(true);
 
     try {
       console.log('Отправляем данные регистрации:', {
         event_id: eventId,
         user_id: fetchedUser.id,
-        full_name: formData.fullName.trim(),
-        birth_date: formData.birthDate,
-        institute: formData.institute,
-        academic_group: formData.academicGroup.trim(),
+        user_profile_id: userProfile ? userProfile.id : null
       });
 
       const registrationData = {
         event_id: eventId,
         user_id: fetchedUser.id,
-        full_name: formData.fullName.trim(),
-        birth_date: formData.birthDate,
-        institute: formData.institute,
-        academic_group: formData.academicGroup.trim(),
+        user_profile_id: userProfile ? userProfile.id : null
       };
 
       const response = await registrationsAPI.create(registrationData);
@@ -255,227 +153,93 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
     }
   };
 
-  const handleBack = () => {
-    routeNavigator.push(`/event/${eventId}`);
-  };
-
-  if (!event) {
+  // Если у пользователя нет профиля, перенаправляем на создание профиля
+  if (fetchedUser && !userProfile) {
     return (
-      <Panel id={id} style={{ backgroundColor: '#000000' }}>
-        <PanelHeader style={{ backgroundColor: '#1A1A1A', color: '#FFFFFF' }}>
-          Загрузка...
-        </PanelHeader>
-        <Div style={{ textAlign: 'center', padding: '40px 0' }}>
-          <Text style={{ color: '#FFFFFF' }}>Загрузка мероприятия...</Text>
+      <Panel id={id}>
+        <PanelHeader>Регистрация на мероприятие</PanelHeader>
+        <Div>
+          <Card style={{ padding: '20px', marginBottom: '20px' }}>
+            <Title level="3" style={{ marginBottom: '12px' }}>
+              Сначала создайте профиль
+            </Title>
+            <Text style={{ marginBottom: '16px', color: '#666' }}>
+              Для регистрации на мероприятия необходимо создать профиль с вашими данными.
+            </Text>
+            <Button
+              size="l"
+              stretched
+              onClick={() => routeNavigator.push('/profile')}
+            >
+              Создать профиль
+            </Button>
+          </Card>
         </Div>
       </Panel>
     );
   }
 
   return (
-    <Panel id={id} style={{ backgroundColor: '#000000' }}>
-      <PanelHeader 
-        style={{ backgroundColor: '#1A1A1A', color: '#FFFFFF' }}
-        left={
-          <Button
-            mode="tertiary"
-            onClick={handleBack}
-            style={{ color: '#FFFFFF' }}
-          >
-            <Icon28ArrowLeftOutline />
-          </Button>
-        }
-      >
-        {isCancelMode ? 'Отменить регистрацию' : 'Регистрация'}
-      </PanelHeader>
+    <Panel id={id}>
+      <PanelHeader>Регистрация на мероприятие</PanelHeader>
       
-      <Group style={{ backgroundColor: '#000000' }}>
-        <Header style={{ color: '#FFFFFF' }}>
-          {isCancelMode ? 'Отменить регистрацию' : 'Заполните данные для регистрации'}
-        </Header>
-        
-        {isCancelMode ? (
-          <Div style={{ padding: '16px' }}>
-            <Text style={{ color: '#CCCCCC', marginBottom: '24px' }}>
-              Вы уверены, что хотите отменить регистрацию на мероприятие "{event.title}"?
+      <Div>
+        {event && (
+          <Card style={{ padding: '16px', marginBottom: '20px' }}>
+            <Title level="3" style={{ marginBottom: '8px' }}>
+              {event.title}
+            </Title>
+            <Text style={{ color: '#666', marginBottom: '8px' }}>
+              {event.location}
             </Text>
-            
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <Button
-                mode="secondary"
-                onClick={handleBack}
-                style={{ flex: 1 }}
-              >
-                Нет, оставить
-              </Button>
-              <Button
-                mode="primary"
-                onClick={handleCancelRegistration}
-                style={{
-                  flex: 1,
-                  backgroundColor: '#FF3B30',
-                }}
-              >
-                Отменить регистрацию
-              </Button>
-            </div>
-          </Div>
-        ) : (
-          <Div style={{ padding: '16px' }}>
-            {/* Отображение информации о пользователе */}
-            {vkUserData && (
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                marginBottom: '20px',
-                padding: '16px',
-                backgroundColor: '#1A1A1A',
-                borderRadius: '12px',
-                border: '1px solid #333'
-              }}>
-                <Avatar 
-                  size={48} 
-                  src={vkUserData.photo_100} 
-                  style={{ marginRight: '12px' }}
-                />
-                <div>
-                  <Text style={{ color: '#FFFFFF', fontWeight: 'bold', marginBottom: '4px' }}>
-                    {vkUserData.first_name} {vkUserData.last_name}
-                  </Text>
-                  <Text style={{ color: '#AAAAAA', fontSize: '14px' }}>
-                    Данные автоматически заполнены из вашего профиля VK
-                  </Text>
-                </div>
-              </div>
-            )}
-
-            {/* Индикатор загрузки данных пользователя */}
-            {userDataLoading && (
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                padding: '20px',
-                marginBottom: '20px',
-                backgroundColor: '#1A1A1A',
-                borderRadius: '12px',
-                border: '1px solid #333'
-              }}>
-                <div style={{
-                  width: '16px',
-                  height: '16px',
-                  border: '2px solid #333',
-                  borderTop: '2px solid #0077FF',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                  marginRight: '8px'
-                }} />
-                <Text style={{ color: '#AAAAAA' }}>Загружаем ваши данные...</Text>
-              </div>
-            )}
-
-            <FormItem
-              top="ФИО *"
-              status={errors.fullName ? 'error' : 'default'}
-              bottom={errors.fullName}
-            >
-              <Input
-                value={formData.fullName}
-                onChange={(e) => handleInputChange('fullName', e.target.value)}
-                placeholder="Введите полное имя"
-              />
-            </FormItem>
-
-            <FormItem
-              top="Дата рождения *"
-              status={errors.birthDate ? 'error' : 'default'}
-              bottom={errors.birthDate}
-            >
-              <input
-                type="date"
-                value={formData.birthDate ? formData.birthDate.split('T')[0] : ''}
-                onChange={(e) => handleInputChange('birthDate', e.target.value)}
-                max={new Date().toISOString().split('T')[0]}
-              />
-            </FormItem>
-
-            <FormItem
-              top="Институт *"
-              status={errors.institute ? 'error' : 'default'}
-              bottom={errors.institute}
-            >
-              <select
-                value={formData.institute}
-                onChange={(e) => handleInputChange('institute', e.target.value)}
-              >
-                <option value="">
-                  Выберите институт
-                </option>
-                {institutesArray.map(institute => (
-                  <option 
-                    key={institute.id} 
-                    value={institute.id}
-                  >
-                    {institute.name}
-                  </option>
-                ))}
-              </select>
-            </FormItem>
-
-            <FormItem
-              top="Академическая группа *"
-              status={errors.academicGroup ? 'error' : 'default'}
-              bottom={errors.academicGroup}
-            >
-              <Input
-                value={formData.academicGroup}
-                onChange={(e) => handleInputChange('academicGroup', e.target.value)}
-                placeholder="Введите академическую группу"
-              />
-            </FormItem>
-
-            <Div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-              <Button
-                mode="secondary"
-                onClick={handleBack}
-                style={{ flex: 1 }}
-              >
-                Отмена
-              </Button>
-              <Button
-                mode="primary"
-                onClick={handleSubmit}
-                disabled={loading}
-                style={{ flex: 1 }}
-              >
-                {loading ? 'Регистрация...' : 'Зарегистрироваться'}
-              </Button>
-            </Div>
-          </Div>
+            <Text style={{ color: '#666' }}>
+              {new Date(event.date).toLocaleDateString('ru-RU')}
+            </Text>
+          </Card>
         )}
-      </Group>
+
+        {userProfile && (
+          <Card style={{ padding: '16px', marginBottom: '20px' }}>
+            <Title level="3" style={{ marginBottom: '12px' }}>
+              Ваши данные для регистрации
+            </Title>
+            <Text style={{ marginBottom: '8px' }}>
+              <strong>Имя:</strong> {userProfile.full_name}
+            </Text>
+            <Text style={{ marginBottom: '8px' }}>
+              <strong>Дата рождения:</strong> {new Date(userProfile.birth_date).toLocaleDateString('ru-RU')}
+            </Text>
+            <Text style={{ marginBottom: '8px' }}>
+              <strong>Институт:</strong> {institutes.find(i => i.value === userProfile.institute)?.label || userProfile.institute}
+            </Text>
+            <Text style={{ marginBottom: '8px' }}>
+              <strong>Группа:</strong> {userProfile.academic_group}
+            </Text>
+          </Card>
+        )}
+
+        <Div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+          <Button
+            size="l"
+            stretched
+            loading={loading}
+            onClick={handleSubmit}
+          >
+            Зарегистрироваться
+          </Button>
+        </Div>
+      </Div>
 
       {snackbar && (
         <Snackbar
           onClose={() => setSnackbar(null)}
-          duration={3000}
-          mode={snackbar.mode}
+          before={
+            <div style={{ background: snackbar.mode === 'error' ? '#FF3B30' : '#4CAF50', width: 4, height: 4, borderRadius: '50%' }} />
+          }
         >
           {snackbar.text}
         </Snackbar>
       )}
-
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
     </Panel>
   );
-};
-
-RegisterEvent.propTypes = {
-  id: PropTypes.string.isRequired,
-  fetchedUser: PropTypes.shape({
-    id: PropTypes.number,
-    first_name: PropTypes.string,
-    last_name: PropTypes.string,
-    photo_200: PropTypes.string,
-  }),
 }; 
