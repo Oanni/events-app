@@ -40,11 +40,31 @@ const apiRequest = async (endpoint, options = {}) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
+    // Проверяем, есть ли контент в ответе
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      // Если нет JSON контента, возвращаем пустой массив для GET запросов
+      if (defaultOptions.method === 'GET' || !defaultOptions.method) {
+        console.log(`Empty response for GET request, returning empty array`);
+        return [];
+      }
+      // Для других запросов возвращаем null
+      return null;
+    }
+    
     const data = await response.json();
     console.log(`API response:`, data);
     return data;
   } catch (error) {
     console.error(`API Error for ${url}:`, error);
+    
+    // Если это ошибка парсинга JSON и это GET запрос, возвращаем пустой массив
+    if (error.message.includes('Unexpected end of JSON input') && 
+        (!options.method || options.method === 'GET')) {
+      console.log(`JSON parse error for GET request, returning empty array`);
+      return [];
+    }
+    
     throw error;
   }
 };
@@ -53,10 +73,18 @@ const apiRequest = async (endpoint, options = {}) => {
 export const eventsAPI = {
   getAll: () => apiRequest('/events'),
   getById: (id) => apiRequest(`/events?id=eq.${id}`),
-  create: (eventData) => apiRequest('/events', {
-    method: 'POST',
-    body: JSON.stringify(eventData)
-  }),
+  create: async (eventData) => {
+    try {
+      const response = await apiRequest('/events', {
+        method: 'POST',
+        body: JSON.stringify(eventData)
+      });
+      // Supabase может вернуть пустой ответ при успешном создании
+      return response || { success: true };
+    } catch (error) {
+      throw error;
+    }
+  },
   update: (id, eventData) => apiRequest(`/events?id=eq.${id}`, {
     method: 'PATCH',
     body: JSON.stringify(eventData)
@@ -72,10 +100,18 @@ export const eventsAPI = {
 export const registrationsAPI = {
   getAll: () => apiRequest('/registrations'),
   getById: (id) => apiRequest(`/registrations?id=eq.${id}`),
-  create: (registrationData) => apiRequest('/registrations', {
-    method: 'POST',
-    body: JSON.stringify(registrationData)
-  }),
+  create: async (registrationData) => {
+    try {
+      const response = await apiRequest('/registrations', {
+        method: 'POST',
+        body: JSON.stringify(registrationData)
+      });
+      // Supabase может вернуть пустой ответ при успешном создании
+      return response || { success: true };
+    } catch (error) {
+      throw error;
+    }
+  },
   delete: (id) => apiRequest(`/registrations?id=eq.${id}`, {
     method: 'DELETE'
   }),
