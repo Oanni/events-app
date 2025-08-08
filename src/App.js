@@ -54,7 +54,7 @@ const router = createHashRouter([
   },
 ]);
 
-function App() {
+export const App = () => {
   const [fetchedUser, setFetchedUser] = useState(null);
   const [popout, setPopout] = useState(null);
 
@@ -83,6 +83,4 @@ function App() {
       </AdaptivityProvider>
     </ConfigProvider>
   );
-}
-
-export default App;
+};
