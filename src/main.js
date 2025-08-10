@@ -149,6 +149,123 @@ const styleElement = document.createElement('style');
 styleElement.textContent = additionalStyles;
 document.head.appendChild(styleElement);
 
+// Улучшение работы полей даты и времени на мобильных устройствах
+const improveDateTimeInputs = () => {
+  // Функция для улучшения работы полей даты
+  const improveDateInput = (input) => {
+    // Предотвращаем зум на iOS
+    input.addEventListener('focus', () => {
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          document.body.scrollTop = 0;
+        }, 100);
+      }
+    });
+
+    // Улучшаем отзывчивость на тач
+    input.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+
+    // Добавляем визуальную обратную связь
+    input.addEventListener('mousedown', () => {
+      input.style.transform = 'scale(0.98)';
+    });
+
+    input.addEventListener('mouseup', () => {
+      input.style.transform = 'scale(1)';
+    });
+
+    input.addEventListener('mouseleave', () => {
+      input.style.transform = 'scale(1)';
+    });
+
+    // Для мобильных устройств
+    input.addEventListener('touchend', () => {
+      input.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        input.style.transform = 'scale(1)';
+      }, 150);
+    });
+  };
+
+  // Функция для улучшения работы полей времени
+  const improveTimeInput = (input) => {
+    // Предотвращаем зум на iOS
+    input.addEventListener('focus', () => {
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          document.body.scrollTop = 0;
+        }, 100);
+      }
+    });
+
+    // Улучшаем отзывчивость на тач
+    input.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
+
+    // Добавляем визуальную обратную связь
+    input.addEventListener('mousedown', () => {
+      input.style.transform = 'scale(0.98)';
+    });
+
+    input.addEventListener('mouseup', () => {
+      input.style.transform = 'scale(1)';
+    });
+
+    input.addEventListener('mouseleave', () => {
+      input.style.transform = 'scale(1)';
+    });
+
+    // Для мобильных устройств
+    input.addEventListener('touchend', () => {
+      input.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        input.style.transform = 'scale(1)';
+      }, 150);
+    });
+  };
+
+  // Применяем улучшения к существующим полям
+  document.querySelectorAll('input[type="date"]').forEach(improveDateInput);
+  document.querySelectorAll('input[type="time"]').forEach(improveTimeInput);
+
+  // Наблюдаем за добавлением новых полей
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === 1) { // Element node
+          if (node.matches && node.matches('input[type="date"]')) {
+            improveDateInput(node);
+          } else if (node.matches && node.matches('input[type="time"]')) {
+            improveTimeInput(node);
+          }
+          
+          // Проверяем дочерние элементы
+          node.querySelectorAll && node.querySelectorAll('input[type="date"]').forEach(improveDateInput);
+          node.querySelectorAll && node.querySelectorAll('input[type="time"]').forEach(improveTimeInput);
+        }
+      });
+    });
+  });
+
+  // Начинаем наблюдение
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+};
+
+// Запускаем улучшения после загрузки DOM
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', improveDateTimeInputs);
+} else {
+  improveDateTimeInputs();
+}
+
 const container = document.getElementById('root');
 const root = createRoot(container);
 
