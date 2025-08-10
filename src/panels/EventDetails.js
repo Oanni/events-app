@@ -335,7 +335,7 @@ export const EventDetails = ({ id, fetchedUser }) => {
                   before={
                     <Avatar 
                       size={32} 
-                      src={registration.vkUserData?.photo_200}
+                      src={fetchedUser?.photo_200}
                       fallbackIcon={<Icon28UserOutline />}
                     >
                       {initials}
