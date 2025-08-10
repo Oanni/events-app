@@ -49,18 +49,18 @@ export const Home = ({ id, fetchedUser }) => {
   };
 
   return (
-    <Panel id={id}>
-      <PanelHeader>Главная</PanelHeader>
+    <Panel id={id} style={{ backgroundColor: '#000000' }}>
+      <PanelHeader style={{ backgroundColor: '#000000', color: '#FFFFFF', borderBottom: '1px solid #333' }}>Главная</PanelHeader>
       
       {fetchedUser && (
-        <Group header={<Header size="s">Добро пожаловать!</Header>}>
-          <Cell before={photo_200 && <Avatar src={photo_200} />} subtitle={city?.title}>
+        <Group style={{ backgroundColor: '#000000' }} header={<Header size="s" style={{ color: '#FFFFFF' }}>Добро пожаловать!</Header>}>
+          <Cell before={photo_200 && <Avatar src={photo_200} />} subtitle={city?.title} style={{ backgroundColor: '#1A1A1A', color: '#FFFFFF' }}>
             {`${first_name} ${last_name}`}
           </Cell>
         </Group>
       )}
 
-      <Group header={<Header size="s">Действия</Header>}>
+      <Group style={{ backgroundColor: '#000000' }} header={<Header size="s" style={{ color: '#FFFFFF' }}>Действия</Header>}>
         <Div>
           <Button 
             stretched 
@@ -91,7 +91,7 @@ export const Home = ({ id, fetchedUser }) => {
         </Div>
       </Group>
 
-      <Group header={<Header size="s">Все мероприятия</Header>}>
+      <Group style={{ backgroundColor: '#000000' }} header={<Header size="s" style={{ color: '#FFFFFF' }}>Все мероприятия</Header>}>
         {loading ? (
           <Div style={{ textAlign: 'center', padding: '20px' }}>
             <Spinner size="medium" />

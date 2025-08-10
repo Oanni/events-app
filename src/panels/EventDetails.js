@@ -163,7 +163,7 @@ export const EventDetails = ({ id, fetchedUser }) => {
   if (loading) {
     return (
       <Panel id={id} style={{ backgroundColor: '#000000' }}>
-        <PanelHeader style={{ backgroundColor: '#1A1A1A', color: '#FFFFFF' }}>
+        <PanelHeader style={{ backgroundColor: '#000000', color: '#FFFFFF', borderBottom: '1px solid #333' }}>
           Загрузка...
         </PanelHeader>
         <Div style={{ textAlign: 'center', padding: '40px 0' }}>
@@ -176,7 +176,7 @@ export const EventDetails = ({ id, fetchedUser }) => {
   if (!event) {
     return (
       <Panel id={id} style={{ backgroundColor: '#000000' }}>
-        <PanelHeader style={{ backgroundColor: '#1A1A1A', color: '#FFFFFF' }}>
+        <PanelHeader style={{ backgroundColor: '#000000', color: '#FFFFFF', borderBottom: '1px solid #333' }}>
           Мероприятие не найдено
         </PanelHeader>
         <Div style={{ textAlign: 'center', padding: '40px 0' }}>
@@ -189,7 +189,7 @@ export const EventDetails = ({ id, fetchedUser }) => {
   return (
     <Panel id={id} style={{ backgroundColor: '#000000' }}>
       <PanelHeader 
-        style={{ backgroundColor: '#1A1A1A', color: '#FFFFFF' }}
+        style={{ backgroundColor: '#000000', color: '#FFFFFF', borderBottom: '1px solid #333' }}
         left={
           <Button
             mode="tertiary"

@@ -159,7 +159,7 @@ export const MyEvents = ({ id, fetchedUser }) => {
 
   return (
     <Panel id={id} style={{ backgroundColor: '#000000' }}>
-      <PanelHeader style={{ backgroundColor: '#1A1A1A', color: '#FFFFFF' }}>
+      <PanelHeader style={{ backgroundColor: '#000000', color: '#FFFFFF', borderBottom: '1px solid #333' }}>
         Мои мероприятия
       </PanelHeader>
       

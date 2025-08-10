@@ -63,7 +63,7 @@ export const Navigation = ({ activeTab, onTabChange }) => {
   return (
     <FixedLayout vertical="bottom">
       <Div style={{ padding: 0 }}>
-        <Tabbar>
+        <Tabbar style={{ backgroundColor: '#000000', borderTop: '1px solid #333' }}>
           {tabs.map((tab) => (
             <TabbarItem
               key={tab.id}
@@ -71,6 +71,10 @@ export const Navigation = ({ activeTab, onTabChange }) => {
               onClick={() => handleTabClick(tab.id)}
               text={tab.text}
               aria-label={tab.ariaLabel}
+              style={{
+                color: activeTab === tab.id ? '#0077FF' : '#FFFFFF',
+                backgroundColor: 'transparent'
+              }}
             >
               {tab.icon}
             </TabbarItem>
@@ -127,8 +131,9 @@ export const Navigation = ({ activeTab, onTabChange }) => {
             minWidth: '48px',
             minHeight: '48px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            backgroundColor: '#1A1A1A',
+            border: '1px solid #333',
+            color: '#FFFFFF',
             padding: '0',
             display: 'flex',
             alignItems: 'center',
