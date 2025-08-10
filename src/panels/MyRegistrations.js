@@ -56,14 +56,25 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
       const eventIds = response.map(registration => registration.event_id);
       console.log('🎯 ID мероприятий:', eventIds);
       
-      // Получаем полную информацию о мероприятиях
+      // Получаем полную информацию о мероприятиях с количеством регистраций
       const events = [];
       for (const eventId of eventIds) {
         try {
           const eventResponse = await eventsAPI.getById(eventId);
           // Supabase возвращает массив, берем первый элемент
           if (eventResponse && eventResponse.length > 0) {
-            events.push(eventResponse[0]);
+            const event = eventResponse[0];
+            
+            // Получаем количество регистраций для этого мероприятия
+            try {
+              const registrationsResponse = await registrationsAPI.getByEvent(eventId);
+              event.registrations_count = registrationsResponse ? registrationsResponse.length : 0;
+            } catch (regError) {
+              console.error(`Ошибка при получении регистраций для мероприятия ${eventId}:`, regError);
+              event.registrations_count = 0;
+            }
+            
+            events.push(event);
           }
         } catch (error) {
           console.error(`Ошибка при получении мероприятия ${eventId}:`, error);
@@ -128,19 +139,21 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
       );
     }
 
-    return registeredEvents.map(event => {
-      console.log('🎯 Рендерим зарегистрированное мероприятие:', event);
-      
-      return (
-        <EventCard
-          key={event.id}
-          event={event}
-          onPress={handleEventPress}
-          isRegistered={true} // Показываем как зарегистрированное
-          showRegisterButton={true}
-        />
-      );
-    });
+    return registeredEvents
+      .filter(event => event && event.id) // Фильтруем только валидные события
+      .map(event => {
+        console.log('🎯 Рендерим зарегистрированное мероприятие:', event);
+        
+        return (
+          <EventCard
+            key={event.id}
+            event={event}
+            onPress={handleEventPress}
+            isRegistered={true} // Показываем как зарегистрированное
+            showRegisterButton={true}
+          />
+        );
+      });
   };
 
   return (

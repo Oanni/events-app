@@ -51,7 +51,15 @@ export const MyEvents = ({ id, fetchedUser }) => {
     try {
       const response = await eventsAPI.getMyEvents(fetchedUser.id);
       // Supabase возвращает массив напрямую, а не в response.data
-      setMyEvents(response || []);
+      
+      // Проверяем, что response является массивом
+      if (!Array.isArray(response)) {
+        console.log('❌ Ответ не является массивом, устанавливаем пустой массив');
+        setMyEvents([]);
+        return;
+      }
+      
+      setMyEvents(response);
       
       // Проверяем достижения по количеству созданных мероприятий
       if (response && response.length > 0) {
@@ -60,6 +68,7 @@ export const MyEvents = ({ id, fetchedUser }) => {
     } catch (error) {
       const errorMessage = handleAPIError(error);
       setSnackbar({ text: errorMessage, mode: 'error' });
+      setMyEvents([]);
     } finally {
       setLoading(false);
     }
@@ -133,17 +142,19 @@ export const MyEvents = ({ id, fetchedUser }) => {
       );
     }
 
-    return myEvents.map(event => (
-      <EventCard
-        key={event.id}
-        event={event}
-        onPress={handleEventPress}
-        isRegistered={false}
-        showRegisterButton={false}
-        onDelete={handleDeleteEvent}
-        isOwner={true}
-      />
-    ));
+    return myEvents
+      .filter(event => event && event.id) // Фильтруем только валидные события
+      .map(event => (
+        <EventCard
+          key={event.id}
+          event={event}
+          onPress={handleEventPress}
+          isRegistered={false}
+          showRegisterButton={false}
+          onDelete={handleDeleteEvent}
+          isOwner={true}
+        />
+      ));
   };
 
   return (

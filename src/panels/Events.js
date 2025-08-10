@@ -43,6 +43,14 @@ export const Events = ({ id, fetchedUser }) => {
       console.log('📋 Получен ответ:', response);
       console.log('📊 Данные мероприятий:', response);
       
+      // Проверяем, что response является массивом
+      if (!Array.isArray(response)) {
+        console.log('❌ Ответ не является массивом, устанавливаем пустой массив');
+        setEvents([]);
+        setFilteredEvents([]);
+        return;
+      }
+      
       // Supabase возвращает массив напрямую, а не в response.data
       // Сортируем по дате (ближайшие сначала)
       const sortedEvents = response.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -52,7 +60,9 @@ export const Events = ({ id, fetchedUser }) => {
     } catch (error) {
       console.error('❌ Ошибка при загрузке мероприятий:', error);
       const errorMessage = handleAPIError(error);
-      // Можно добавить snackbar для показа ошибки
+      // Устанавливаем пустой массив при ошибке
+      setEvents([]);
+      setFilteredEvents([]);
     } finally {
       setLoading(false);
     }
@@ -139,19 +149,21 @@ export const Events = ({ id, fetchedUser }) => {
       );
     }
 
-    return eventsToShow.map(event => {
-      console.log('🎯 Рендерим мероприятие:', event);
-      
-      return (
-        <EventCard
-          key={event.id}
-          event={event}
-          onPress={handleEventPress}
-          isRegistered={false} // Пока отключаем проверку регистрации
-          showRegisterButton={true}
-        />
-      );
-    });
+    return eventsToShow
+      .filter(event => event && event.id) // Фильтруем только валидные события
+      .map(event => {
+        console.log('🎯 Рендерим мероприятие:', event);
+        
+        return (
+          <EventCard
+            key={event.id}
+            event={event}
+            onPress={handleEventPress}
+            isRegistered={false} // Пока отключаем проверку регистрации
+            showRegisterButton={true}
+          />
+        );
+      });
   };
 
   return (

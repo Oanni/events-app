@@ -336,7 +336,7 @@ export const EventDetails = ({ id, fetchedUser }) => {
                     <Avatar 
                       size={32} 
                       src={registration.photo}
-                      fallbackIcon={<Icon28UserOutline />}
+                      
                     >
                       {initials}
                     </Avatar>
