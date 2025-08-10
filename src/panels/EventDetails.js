@@ -335,7 +335,7 @@ export const EventDetails = ({ id, fetchedUser }) => {
                   before={
                     <Avatar 
                       size={32} 
-                      src={fetchedUser?.photo_200}
+                      src={registration.photo}
                       fallbackIcon={<Icon28UserOutline />}
                     >
                       {initials}

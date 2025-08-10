@@ -215,6 +215,7 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
         birth_date: formData.birthDate,
         institute: formData.institute,
         academic_group: formData.academicGroup.trim(),
+        photo: vkUserData.photo_200,
       };
 
       const response = await registrationsAPI.create(registrationData);
