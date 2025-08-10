@@ -121,7 +121,23 @@ export const eventsAPI = {
         method: 'POST',
         body: JSON.stringify(eventData)
       });
-      // Supabase может вернуть пустой ответ при успешном создании
+      
+      // Если Supabase вернул данные с ID, возвращаем их
+      if (response && response.id) {
+        return response;
+      }
+      
+      // Если ответ пустой, но запрос прошел успешно, 
+      // нужно получить созданное мероприятие по данным
+      if (response === null || response === undefined) {
+        // Получаем последнее созданное мероприятие пользователя
+        const userEvents = await apiRequest(`/events?created_by=eq.${eventData.created_by}&order=created_at.desc&limit=1`);
+        if (userEvents && userEvents.length > 0) {
+          return userEvents[0];
+        }
+      }
+      
+      // Fallback
       return response || { success: true };
     } catch (error) {
       throw error;
@@ -177,7 +193,23 @@ export const registrationsAPI = {
         method: 'POST',
         body: JSON.stringify(registrationData)
       });
-      // Supabase может вернуть пустой ответ при успешном создании
+      
+      // Если Supabase вернул данные с ID, возвращаем их
+      if (response && response.id) {
+        return response;
+      }
+      
+      // Если ответ пустой, но запрос прошел успешно, 
+      // нужно получить созданную регистрацию по данным
+      if (response === null || response === undefined) {
+        // Получаем последнюю регистрацию пользователя на это мероприятие
+        const userRegistrations = await apiRequest(`/registrations?event_id=eq.${registrationData.event_id}&user_id=eq.${registrationData.user_id}&order=created_at.desc&limit=1`);
+        if (userRegistrations && userRegistrations.length > 0) {
+          return userRegistrations[0];
+        }
+      }
+      
+      // Fallback
       return response || { success: true };
     } catch (error) {
       throw error;

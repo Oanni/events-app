@@ -19,7 +19,8 @@ import {
   Icon28UserOutline,
   Icon28LinkOutline,
   Icon28ArrowLeftOutline,
-  Icon28DeleteOutline
+  Icon28DeleteOutline,
+  Icon28ShareOutline
 } from '@vkontakte/icons';
 import { useRouteNavigator, useParams } from '@vkontakte/vk-mini-apps-router';
 import { eventsAPI, registrationsAPI, dateUtils, handleAPIError } from '../services/api';
@@ -101,24 +102,25 @@ export const EventDetails = ({ id, fetchedUser }) => {
   };
 
   const handleRegister = () => {
-    if (!fetchedUser) {
+    routeNavigator.push(`/register/${eventId}`);
+  };
+
+  const handleCancelRegistration = async () => {
+    if (!fetchedUser || !eventId) {
       setSnackbar({
-        text: 'Необходима авторизация для регистрации',
+        text: 'Ошибка: пользователь не авторизован',
         mode: 'error'
       });
       return;
     }
 
-    routeNavigator.push(`/register/${eventId}`);
-  };
-
-  const handleCancelRegistration = async () => {
-    if (!fetchedUser) return;
-
     try {
       await registrationsAPI.cancelRegistration(eventId, fetchedUser.id);
       setIsUserRegisteredForEvent(false);
-      await loadEventDetails(); // Обновляем список регистраций
+      
+      // Обновляем список регистраций
+      const updatedRegistrations = await registrationsAPI.getByEvent(eventId);
+      setRegistrations(updatedRegistrations || []);
       
       setSnackbar({
         text: 'Регистрация отменена',
@@ -135,28 +137,88 @@ export const EventDetails = ({ id, fetchedUser }) => {
   };
 
   const handleDeleteEvent = async () => {
-    if (!fetchedUser || String(event.created_by) !== String(fetchedUser.id)) {
+    if (!fetchedUser || !eventId) {
       setSnackbar({
-        text: 'У вас нет прав для удаления этого мероприятия',
+        text: 'Ошибка: пользователь не авторизован',
         mode: 'error'
       });
       return;
     }
 
     try {
-      await eventsAPI.delete(event.id);
+      await eventsAPI.delete(eventId);
       setSnackbar({
-        text: 'Мероприятие успешно удалено',
+        text: 'Мероприятие удалено',
         mode: 'success'
       });
       
-      // Возвращаемся на главную через 2 секунды
+      // Возвращаемся на главную через 1 секунду
       setTimeout(() => {
         routeNavigator.push('/');
-      }, 2000);
+      }, 1000);
     } catch (error) {
       const errorMessage = handleAPIError(error);
       setSnackbar({ text: errorMessage, mode: 'error' });
+    }
+  };
+
+  // Функция для поделиться мероприятием
+  const handleShareEvent = async () => {
+    if (!event) {
+      setSnackbar({
+        text: 'Ошибка: данные мероприятия не загружены',
+        mode: 'error'
+      });
+      return;
+    }
+
+    try {
+      // Генерируем ссылку на мероприятие
+      const eventUrl = `${window.location.origin}/event/${eventId}`;
+      
+      // Формируем текст для шаринга
+      const shareText = `🎉 Мероприятие: "${event.title}"\n📅 ${dateUtils.formatDate(event.date)}\n📍 ${event.location}\n👥 ${registrations.length} участников\n\nПрисоединяйся!`;
+
+      // Проверяем доступность VK Bridge
+      if (window.bridge && window.bridge.send) {
+        await window.bridge.send('VKWebAppShare', {
+          link: eventUrl,
+          text: shareText.substring(0, 100) // Ограничиваем до 100 символов
+        });
+        
+        setSnackbar({
+          text: 'Мероприятие успешно опубликовано!',
+          mode: 'success'
+        });
+      } else {
+        // Fallback для веб-версии - копируем ссылку в буфер обмена
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(`${shareText}\n\n${eventUrl}`);
+          setSnackbar({
+            text: 'Ссылка на мероприятие скопирована в буфер обмена!',
+            mode: 'success'
+          });
+        } else {
+          // Fallback для старых браузеров
+          const textArea = document.createElement('textarea');
+          textArea.value = `${shareText}\n\n${eventUrl}`;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          
+          setSnackbar({
+            text: 'Ссылка на мероприятие скопирована в буфер обмена!',
+            mode: 'success'
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Ошибка при шаринге мероприятия:', error);
+      setSnackbar({
+        text: 'Ошибка при публикации мероприятия',
+        mode: 'error'
+      });
     }
   };
 
@@ -166,9 +228,12 @@ export const EventDetails = ({ id, fetchedUser }) => {
         <PanelHeader style={{ backgroundColor: '#000000', color: '#FFFFFF', borderBottom: '1px solid #333' }}>
           Загрузка...
         </PanelHeader>
-        <Div style={{ textAlign: 'center', padding: '40px 0' }}>
-          <Text style={{ color: '#FFFFFF' }}>Загрузка мероприятия...</Text>
-        </Div>
+        <Group style={{ backgroundColor: '#000000' }}>
+          <Div style={{ textAlign: 'center', padding: '40px 16px' }}>
+            <Text style={{ color: '#FFFFFF' }}>Загружаем информацию о мероприятии...</Text>
+          </Div>
+        </Group>
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
       </Panel>
     );
   }
@@ -179,24 +244,34 @@ export const EventDetails = ({ id, fetchedUser }) => {
         <PanelHeader style={{ backgroundColor: '#000000', color: '#FFFFFF', borderBottom: '1px solid #333' }}>
           Мероприятие не найдено
         </PanelHeader>
-        <Div style={{ textAlign: 'center', padding: '40px 0' }}>
-          <Text style={{ color: '#FFFFFF' }}>Мероприятие не найдено</Text>
-        </Div>
+        <Group style={{ backgroundColor: '#000000' }}>
+          <Div style={{ textAlign: 'center', padding: '40px 16px' }}>
+            <Text style={{ color: '#FFFFFF' }}>Мероприятие не найдено или было удалено</Text>
+            <Button
+              mode="primary"
+              onClick={handleBack}
+              style={{ marginTop: '16px' }}
+            >
+              Вернуться к мероприятиям
+            </Button>
+          </Div>
+        </Group>
+        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
       </Panel>
     );
   }
 
   return (
     <Panel id={id} style={{ backgroundColor: '#000000' }}>
-      <PanelHeader 
-        style={{ backgroundColor: '#000000', color: '#FFFFFF', borderBottom: '1px solid #333' }}
+      <PanelHeader
         left={
           <Button
             mode="tertiary"
             onClick={handleBack}
+            before={<Icon28ArrowLeftOutline />}
             style={{ color: '#FFFFFF' }}
           >
-            <Icon28ArrowLeftOutline />
+            Назад
           </Button>
         }
       >
@@ -227,8 +302,8 @@ export const EventDetails = ({ id, fetchedUser }) => {
             {event.description}
           </Text>
 
-          {event.vk_link && (
-            <div style={{ marginBottom: '24px' }}>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+            {event.vk_link && (
               <Button
                 mode="secondary"
                 before={<Icon28LinkOutline />}
@@ -241,8 +316,21 @@ export const EventDetails = ({ id, fetchedUser }) => {
               >
                 Открыть в ВК
               </Button>
-            </div>
-          )}
+            )}
+            
+            <Button
+              mode="secondary"
+              before={<Icon28ShareOutline />}
+              onClick={handleShareEvent}
+              style={{
+                backgroundColor: 'transparent',
+                border: '1px solid #0077FF',
+                color: '#0077FF',
+              }}
+            >
+              Поделиться
+            </Button>
+          </div>
 
           <div style={{ 
             display: 'flex', 
