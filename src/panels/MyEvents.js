@@ -11,7 +11,7 @@ import {
   Snackbar,
   ScreenSpinner
 } from '@vkontakte/vkui';
-import { Icon28UserOutline, Icon28AddOutline } from '@vkontakte/icons';
+import { Icon28UserOutline } from '@vkontakte/icons';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { eventsAPI, handleAPIError } from '../services/api';
 import { EventCard } from '../components/EventCard';
@@ -110,7 +110,6 @@ export const MyEvents = ({ id, fetchedUser }) => {
               border: 'none',
             }}
           >
-            <Icon28AddOutline style={{ marginRight: '8px' }} />
             Создать мероприятие
           </Button>
         </Placeholder>
