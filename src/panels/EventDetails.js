@@ -24,6 +24,9 @@ import {
 import { useRouteNavigator, useParams } from '@vkontakte/vk-mini-apps-router';
 import { eventsAPI, registrationsAPI, dateUtils, handleAPIError } from '../services/api';
 import { Navigation } from '../components/Navigation';
+import { Confetti } from '../components/Confetti';
+import { Achievement } from '../components/Achievement';
+import { useAchievements } from '../hooks/useAchievements';
 import PropTypes from 'prop-types';
 
 export const EventDetails = ({ id, fetchedUser }) => {
@@ -35,6 +38,15 @@ export const EventDetails = ({ id, fetchedUser }) => {
   const [activeTab, setActiveTab] = useState('events');
   const routeNavigator = useRouteNavigator();
   const { id: eventId } = useParams();
+  
+  // Система достижений
+  const {
+    showConfetti,
+    achievement,
+    checkRegistrationAchievements,
+    handleConfettiComplete,
+    handleAchievementClose
+  } = useAchievements(fetchedUser?.id);
 
   useEffect(() => {
     loadEventDetails();
@@ -364,6 +376,17 @@ export const EventDetails = ({ id, fetchedUser }) => {
           {snackbar.text}
         </Snackbar>
       )}
+
+      {/* Компоненты геймификации */}
+      <Confetti 
+        isActive={showConfetti} 
+        onComplete={handleConfettiComplete} 
+      />
+      <Achievement 
+        isVisible={achievement.isVisible}
+        message={achievement.message}
+        onClose={handleAchievementClose}
+      />
 
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
     </Panel>

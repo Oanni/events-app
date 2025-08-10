@@ -18,6 +18,9 @@ import { Icon28ArrowLeftOutline } from '@vkontakte/icons';
 import { useRouteNavigator, useParams, useSearchParams } from '@vkontakte/vk-mini-apps-router';
 import { eventsAPI, registrationsAPI, handleAPIError } from '../services/api';
 import { Navigation } from '../components/Navigation';
+import { Confetti } from '../components/Confetti';
+import { Achievement } from '../components/Achievement';
+import { useAchievements } from '../hooks/useAchievements';
 import bridge from '@vkontakte/vk-bridge';
 
 // Массив институтов
@@ -53,6 +56,15 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
   const routeNavigator = useRouteNavigator();
   const { id: eventId } = useParams();
   const [searchParams] = useSearchParams();
+  
+  // Система достижений
+  const {
+    showConfetti,
+    achievement,
+    checkRegistrationAchievements,
+    handleConfettiComplete,
+    handleAchievementClose
+  } = useAchievements(fetchedUser?.id);
 
   useEffect(() => {
     loadEvent();
@@ -207,6 +219,16 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
 
       const response = await registrationsAPI.create(registrationData);
       console.log('Ответ от API:', response);
+
+      // Проверяем достижения по количеству регистраций
+      try {
+        const userRegistrations = await registrationsAPI.getMyRegistrations(fetchedUser.id);
+        if (userRegistrations && userRegistrations.length > 0) {
+          await checkRegistrationAchievements(userRegistrations.length);
+        }
+      } catch (error) {
+        console.error('Ошибка при проверке достижений:', error);
+      }
 
       setSnackbar({
         text: 'Регистрация успешно завершена!',
@@ -464,6 +486,17 @@ export const RegisterEvent = ({ id, fetchedUser }) => {
           {snackbar.text}
         </Snackbar>
       )}
+
+      {/* Компоненты геймификации */}
+      <Confetti 
+        isActive={showConfetti} 
+        onComplete={handleConfettiComplete} 
+      />
+      <Achievement 
+        isVisible={achievement.isVisible}
+        message={achievement.message}
+        onClose={handleAchievementClose}
+      />
 
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
     </Panel>

@@ -14,6 +14,9 @@ import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { registrationsAPI, eventsAPI, handleAPIError } from '../services/api';
 import { EventCard } from '../components/EventCard';
 import { Navigation } from '../components/Navigation';
+import { Confetti } from '../components/Confetti';
+import { Achievement } from '../components/Achievement';
+import { useAchievements } from '../hooks/useAchievements';
 import PropTypes from 'prop-types';
 
 export const MyRegistrations = ({ id, fetchedUser }) => {
@@ -21,6 +24,15 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('my_registrations');
   const routeNavigator = useRouteNavigator();
+  
+  // Система достижений
+  const {
+    showConfetti,
+    achievement,
+    checkRegistrationAchievements,
+    handleConfettiComplete,
+    handleAchievementClose
+  } = useAchievements(fetchedUser?.id);
 
   useEffect(() => {
     loadRegisteredEvents();
@@ -62,6 +74,11 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
       const sortedEvents = events.sort((a, b) => new Date(a.date) - new Date(b.date));
       setRegisteredEvents(sortedEvents);
       console.log('✅ Мероприятия установлены в состояние:', sortedEvents);
+      
+      // Проверяем достижения по количеству регистраций
+      if (response && response.length > 0) {
+        await checkRegistrationAchievements(response.length);
+      }
     } catch (error) {
       console.error('❌ Ошибка при загрузке регистраций:', error);
       const errorMessage = handleAPIError(error);
@@ -137,6 +154,17 @@ export const MyRegistrations = ({ id, fetchedUser }) => {
           {renderRegisteredEvents()}
         </Div>
       </Group>
+
+      {/* Компоненты геймификации */}
+      <Confetti 
+        isActive={showConfetti} 
+        onComplete={handleConfettiComplete} 
+      />
+      <Achievement 
+        isVisible={achievement.isVisible}
+        message={achievement.message}
+        onClose={handleAchievementClose}
+      />
 
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
     </Panel>

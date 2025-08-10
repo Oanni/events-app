@@ -16,6 +16,9 @@ import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
 import { eventsAPI, handleAPIError } from '../services/api';
 import { EventCard } from '../components/EventCard';
 import { Navigation } from '../components/Navigation';
+import { Confetti } from '../components/Confetti';
+import { Achievement } from '../components/Achievement';
+import { useAchievements } from '../hooks/useAchievements';
 import PropTypes from 'prop-types';
 
 export const MyEvents = ({ id, fetchedUser }) => {
@@ -24,6 +27,15 @@ export const MyEvents = ({ id, fetchedUser }) => {
   const [activeTab, setActiveTab] = useState('my_events');
   const [snackbar, setSnackbar] = useState(null);
   const routeNavigator = useRouteNavigator();
+  
+  // Система достижений
+  const {
+    showConfetti,
+    achievement,
+    checkCreationAchievements,
+    handleConfettiComplete,
+    handleAchievementClose
+  } = useAchievements(fetchedUser?.id);
 
   useEffect(() => {
     loadMyEvents();
@@ -40,6 +52,11 @@ export const MyEvents = ({ id, fetchedUser }) => {
       const response = await eventsAPI.getMyEvents(fetchedUser.id);
       // Supabase возвращает массив напрямую, а не в response.data
       setMyEvents(response || []);
+      
+      // Проверяем достижения по количеству созданных мероприятий
+      if (response && response.length > 0) {
+        await checkCreationAchievements(response.length);
+      }
     } catch (error) {
       const errorMessage = handleAPIError(error);
       setSnackbar({ text: errorMessage, mode: 'error' });
@@ -150,6 +167,17 @@ export const MyEvents = ({ id, fetchedUser }) => {
           {snackbar.text}
         </Snackbar>
       )}
+
+      {/* Компоненты геймификации */}
+      <Confetti 
+        isActive={showConfetti} 
+        onComplete={handleConfettiComplete} 
+      />
+      <Achievement 
+        isVisible={achievement.isVisible}
+        message={achievement.message}
+        onClose={handleAchievementClose}
+      />
 
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
     </Panel>
