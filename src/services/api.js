@@ -84,7 +84,36 @@ const apiRequest = async (endpoint, options = {}) => {
 
 // Events API
 export const eventsAPI = {
-  getAll: () => apiRequest('/events'),
+  getAll: async () => {
+    try {
+      // Получаем все мероприятия
+      const events = await apiRequest('/events');
+      
+      // Для каждого мероприятия получаем количество регистраций
+      const eventsWithRegistrations = await Promise.all(
+        events.map(async (event) => {
+          try {
+            const registrations = await apiRequest(`/registrations?event_id=eq.${event.id}`);
+            return {
+              ...event,
+              registrations_count: registrations ? registrations.length : 0
+            };
+          } catch (error) {
+            console.error(`Ошибка при получении регистраций для мероприятия ${event.id}:`, error);
+            return {
+              ...event,
+              registrations_count: 0
+            };
+          }
+        })
+      );
+      
+      return eventsWithRegistrations;
+    } catch (error) {
+      console.error('Ошибка при получении мероприятий с регистрациями:', error);
+      throw error;
+    }
+  },
   getById: (id) => apiRequest(`/events?id=eq.${id}`),
   create: async (eventData) => {
     try {
@@ -105,7 +134,36 @@ export const eventsAPI = {
   delete: (id) => apiRequest(`/events?id=eq.${id}`, {
     method: 'DELETE'
   }),
-  getMyEvents: (userId) => apiRequest(`/events?created_by=eq.${userId}`),
+  getMyEvents: async (userId) => {
+    try {
+      // Получаем мероприятия пользователя
+      const events = await apiRequest(`/events?created_by=eq.${userId}`);
+      
+      // Для каждого мероприятия получаем количество регистраций
+      const eventsWithRegistrations = await Promise.all(
+        events.map(async (event) => {
+          try {
+            const registrations = await apiRequest(`/registrations?event_id=eq.${event.id}`);
+            return {
+              ...event,
+              registrations_count: registrations ? registrations.length : 0
+            };
+          } catch (error) {
+            console.error(`Ошибка при получении регистраций для мероприятия ${event.id}:`, error);
+            return {
+              ...event,
+              registrations_count: 0
+            };
+          }
+        })
+      );
+      
+      return eventsWithRegistrations;
+    } catch (error) {
+      console.error('Ошибка при получении мероприятий пользователя с регистрациями:', error);
+      throw error;
+    }
+  },
   search: (query) => apiRequest(`/events?title=ilike.*${query}*`)
 };
 
