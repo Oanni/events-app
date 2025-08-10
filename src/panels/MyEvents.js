@@ -8,7 +8,8 @@ import {
   Title,
   Text,
   Button,
-  Snackbar
+  Snackbar,
+  ScreenSpinner
 } from '@vkontakte/vkui';
 import { Icon28UserOutline, Icon28AddOutline } from '@vkontakte/icons';
 import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types';
 
 export const MyEvents = ({ id, fetchedUser }) => {
   const [myEvents, setMyEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('my_events');
   const [snackbar, setSnackbar] = useState(null);
   const routeNavigator = useRouteNavigator();
@@ -28,8 +30,12 @@ export const MyEvents = ({ id, fetchedUser }) => {
   }, [fetchedUser]);
 
   const loadMyEvents = async () => {
-    if (!fetchedUser) return;
+    if (!fetchedUser) {
+      setLoading(false);
+      return;
+    }
     
+    setLoading(true);
     try {
       const response = await eventsAPI.getMyEvents(fetchedUser.id);
       // Supabase возвращает массив напрямую, а не в response.data
@@ -37,6 +43,8 @@ export const MyEvents = ({ id, fetchedUser }) => {
     } catch (error) {
       const errorMessage = handleAPIError(error);
       setSnackbar({ text: errorMessage, mode: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,6 +71,15 @@ export const MyEvents = ({ id, fetchedUser }) => {
   };
 
   const renderMyEvents = () => {
+    // Показываем спиннер только если загрузка И события пустые
+    if (loading && myEvents.length === 0) {
+      return (
+        <Div style={{ textAlign: 'center', padding: '40px 0' }}>
+          <ScreenSpinner />
+        </Div>
+      );
+    }
+
     if (!fetchedUser) {
       return (
         <Placeholder

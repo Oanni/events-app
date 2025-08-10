@@ -1,0 +1,10 @@
+[33m6e3418b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix React error #130: add validation for undefined events and improve error handling
+[33mc25e6cb[m Fix tab switching flicker: add loading states to MyEvents and MyRegistrations panels
+[33m11724c6[m Fix React errors: move CSS animations to global.css, remove document.head manipulation
+[33m801ac4d[m Add beautiful animations and transitions: center create button, improve UI
+[33md9b8a3f[m Fix Navigation component: remove routes import and update routes
+[33m8fd3eb2[m Fix React routing errors: remove old router and AppConfig
+[33m2fd11a4[m Fix App export to named export
+[33mc7f98db[m Fix VKUI import error in App.js
+[33mfdd51f7[m Fix build error: remove non-existent initData import
+[33m8f471b0[m Implement user profile system: automatic registration with saved user data
